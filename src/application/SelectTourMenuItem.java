@@ -157,6 +157,9 @@ public class SelectTourMenuItem extends StackPane{
 		label.setContentDisplay(cd);
 	}
 	
+	public double getPortee(){
+		return Math.sqrt(Integer.valueOf(portee.getText()));
+	}
 	public static Image getDamageImage() {
 		return damageImage;
 	}
@@ -183,5 +186,15 @@ public class SelectTourMenuItem extends StackPane{
 	}
 	public static void setBackgroundImage(Image backgroundImage){
 		SelectTourMenuItem.backgroundImage=backgroundImage;
+	}
+	
+	
+	public void mouseEntered(){
+        bgRec.setFill(Color.BLUE);
+        bgRec.setOpacity(0.5);
+	}
+	
+	public void mouseExited(){
+        bgRec.setOpacity(0.0);
 	}
 }

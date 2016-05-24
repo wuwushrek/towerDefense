@@ -23,6 +23,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 public class Main extends Application {
@@ -41,8 +42,9 @@ public class Main extends Application {
 
 	List<SbireView> mSbires = new ArrayList<SbireView>();
 
-	private Group root = new Group();
-	private Stage stage1 = null;
+	private final Group root = new Group();
+	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
+	private TourMenu mTourMenu;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -56,6 +58,12 @@ public class Main extends Application {
 
 		TILE_SIZE_X.bind(scene.widthProperty().divide(COLUMN_COUNT));
 		TILE_SIZE_Y.bind(scene.heightProperty().divide(ROW_COUNT));
+		//Menu tours
+		mTourMenu = new TourMenu();
+		Scene sceneMenu = new Scene(mTourMenu , TourMenu.WIDTH,TourMenu.HEIGHT);
+		sceneMenu.setFill(null);
+		stage1.setScene(sceneMenu);
+		//fin Menu tours
 
 		GridPane mGrid = new GridPane();
 		mGrid.setGridLinesVisible(true);
@@ -104,9 +112,10 @@ public class Main extends Application {
 		mGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent ev) {
-				// TODO Auto-generated method stub
-				// int posX = (int) (ev.getSceneX()/TILE_SIZE_X.get());
-				// int posY = (int) (ev.getSceneY()/TILE_SIZE_Y.get());
+				if(stage1.isShowing()){
+					stage1.close();
+					return;
+				}
 				if (ev.getButton() == MouseButton.SECONDARY) {
 					new Thread(new Runnable() {
 
@@ -129,11 +138,12 @@ public class Main extends Application {
 				} else {
 					// partie.mSbires.get(0).moveTo(posY, posX);
 					// System.out.println("COUNT: "+partie.count());
-					stage1= new Stage(StageStyle.TRANSPARENT);
-					TourMenu tourMenu = new TourMenu();
-					Scene scene = new Scene(tourMenu , TourMenu.WIDTH,TourMenu.HEIGHT);
-					scene.setFill(null);
-					stage1.setScene(scene);
+					final double currentCenterX = ((int) (ev.getSceneX()/TILE_SIZE_X.get()))*TILE_SIZE_X.get() +TILE_SIZE_X.get()/2;
+					final double currentCenterY= ((int) (ev.getSceneY()/TILE_SIZE_Y.get()))*TILE_SIZE_Y.get()+TILE_SIZE_Y.get()/2;
+					//TourMenu tourMenu = new TourMenu(currentCenterX,currentCenterY);
+					//scene.setFill(null);
+					mTourMenu.setCurrentX(currentCenterX);
+					mTourMenu.setCurrentY(currentCenterY);
 					stage1.setX(ev.getScreenX()-TourMenu.WIDTH/2);
 					stage1.setY(ev.getScreenY()-TourMenu.HEIGHT);
 					stage1.show();
@@ -161,9 +171,23 @@ public class Main extends Application {
 		private ScrollPane mScroll;
 		private TilePane tourMenu;
 		private Polygon contour;
+		private Circle rayon;
+		
+		//private double currentX=0;
+		//private double currentY=0;
 
 		public TourMenu() {
-
+			rayon = new Circle();
+			rayon.setFill(Color.LIGHTGRAY);
+			rayon.setOpacity(0.7);
+			rayon.setStrokeWidth(3);
+			rayon.setStroke(Color.CYAN);
+			//rayon.setCenterX(currentX);
+			//rayon.setCenterY(currentY);
+			rayon.setVisible(false);
+			
+			root.getChildren().add(rayon);
+			
 			tourMenu = new TilePane();
 			tourMenu.setPrefRows(3);
 			tourMenu.setPrefColumns(4);
@@ -172,6 +196,30 @@ public class Main extends Application {
 				SelectTourMenuItem menuItem = new SelectTourMenuItem(
 						new Image(getClass().getResource("tourelle.png").toExternalForm()), "Simple Tourelle", 100, 50, 9,
 						500l);
+				menuItem.setOnMouseEntered(new EventHandler<MouseEvent>(){
+					@Override
+					public void handle(MouseEvent ev) {
+						menuItem.mouseEntered();
+						rayon.setVisible(true);
+						rayon.setRadius(menuItem.getPortee()*Math.min(TILE_SIZE_X.get(), TILE_SIZE_Y.get()));
+					}
+					
+				});
+				menuItem.setOnMouseExited(new EventHandler<MouseEvent>(){
+					@Override
+					public void handle(MouseEvent arg0) {
+						menuItem.mouseExited();
+						rayon.setVisible(false);
+					}
+				});
+				menuItem.setOnMouseClicked(new EventHandler<MouseEvent>(){
+					@Override
+					public void handle(MouseEvent e){
+						
+						rayon.setVisible(false);
+						stage1.close();
+					}
+				});
 				tourMenu.getChildren().add(menuItem);
 			}
 
@@ -188,15 +236,21 @@ public class Main extends Application {
 			double width = WIDTH;
 			double height = HEIGHT;
 			contour = new Polygon();
-			/*contour.getPoints().addAll(width/2,height,width/2-hauteurContour,height-hauteurContour,
-					padding,height-hauteurContour,padding,padding,width,padding,width,height-hauteurContour,
-					width/2+hauteurContour,height-hauteurContour);*/
 			contour.getPoints().addAll(width/2,height,width/2-hauteurContour,height-hauteurContour,
 					width/2+hauteurContour,height-hauteurContour);
 			contour.setStroke(Color.LIGHTCYAN);
 			contour.setFill(Color.LIGHTGRAY);
 			this.getChildren().addAll(contour,mScroll);
 		}
-
+		
+		public void setCurrentX(double currentX){
+			//this.currentX=currentX;
+			rayon.setCenterX(currentX);
+		}
+		
+		public void setCurrentY(double currentY){
+			//this.currentY=currentY;
+			rayon.setCenterY(currentY);
+		}
 	}
 }
