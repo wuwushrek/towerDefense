@@ -152,8 +152,8 @@ public class Main extends Application {
 	}
 
 	class TourMenu extends Group {
-		private final static int WIDTH = 435;
-		private final static int HEIGHT = 250;
+		private final static int WIDTH = 495;
+		private final static int HEIGHT = 270;
 
 		double padding = 10;
 		double hauteurContour = 25;
