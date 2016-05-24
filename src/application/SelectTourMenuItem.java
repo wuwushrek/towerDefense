@@ -39,7 +39,7 @@ public class SelectTourMenuItem extends StackPane{
 	private Rectangle botRec;
 	private Rectangle bgRec;
 	private final Color textFill = Color.WHITE;
-	public  static final int  DIM =100; 
+	public  static final int  DIM =115; 
 	public SelectTourMenuItem(Image tourImage, String name ,int damages , int prix , int portee ,long speed){
 		this.setPrefWidth(DIM);
 		this.setPrefHeight(DIM);
@@ -98,11 +98,13 @@ public class SelectTourMenuItem extends StackPane{
 		VBox vbRight= new VBox(5);
 		vbRight.getChildren().addAll(this.portee,this.damages);
 		vbRight.setAlignment(Pos.BOTTOM_LEFT);
+		//vbRight.setPrefWidth(35);
 		vbRight.prefWidthProperty().bind(this.widthProperty().divide(3));;
 		VBox vbLeft = new VBox(5);
 		vbLeft.getChildren().add(this.speed);
 		vbLeft.setAlignment(Pos.BOTTOM_CENTER);
 		vbLeft.prefWidthProperty().bind(this.widthProperty().divide(3));
+		//vbLeft.setPrefWidth(35);
 		
 		HBox hb = new HBox(5);
 		hb.setAlignment(Pos.CENTER);
@@ -114,6 +116,8 @@ public class SelectTourMenuItem extends StackPane{
 		border.setLeft(vbLeft);
 		border.setRight(vbRight);
 		border.setCenter(this.tourImage);
+		border.prefWidthProperty().bind(backgroundIm.fitWidthProperty());
+		border.prefHeightProperty().bind(backgroundIm.fitHeightProperty());
 
 		bgRec.setWidth(DIM);
         bgRec.setHeight(DIM);
