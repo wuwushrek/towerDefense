@@ -41,9 +41,11 @@ public class Main extends Application {
 	public static final IntegerProperty TILE_SIZE_Y = new SimpleIntegerProperty();
 
 	List<SbireView> mSbires = new ArrayList<SbireView>();
+	private final Partie partie = new Partie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
 
 	private final Group root = new Group();
 	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
+	private final GridPane mGrid = new GridPane();
 	private TourMenu mTourMenu;
 	
 	@Override
@@ -65,7 +67,6 @@ public class Main extends Application {
 		stage1.setScene(sceneMenu);
 		//fin Menu tours
 
-		GridPane mGrid = new GridPane();
 		mGrid.setGridLinesVisible(true);
 		mGrid.prefWidthProperty().bind(scene.widthProperty());
 		mGrid.prefHeightProperty().bind(scene.heightProperty());
@@ -85,8 +86,7 @@ public class Main extends Application {
 		for (int i = 0; i < ROW_COUNT; i++) {
 			mGrid.getRowConstraints().add(rc);
 		}
-
-		Partie partie = new Partie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
+		
 		Tour tour1 = new Tour(partie, 2, 4, 9, 30, 1000);
 		Tour tour2 = new Tour(partie, 4, 3, 9, 10, 1000);
 		tour1.launch();
@@ -173,8 +173,8 @@ public class Main extends Application {
 		private Polygon contour;
 		private Circle rayon;
 		
-		//private double currentX=0;
-		//private double currentY=0;
+		private double currentX=0;
+		private double currentY=0;
 
 		public TourMenu() {
 			rayon = new Circle();
@@ -216,6 +216,15 @@ public class Main extends Application {
 					@Override
 					public void handle(MouseEvent e){
 						
+
+						Tour tour = new Tour(partie,(int) (currentY/TILE_SIZE_Y.get()), (int) (currentX/TILE_SIZE_X.get()), 12, 30, 200);
+						TourView mView = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour);
+						tour.launch();
+						mGrid.add(mView, mView.getColumn(), mView.getRow());
+						GridPane.setHalignment(mView, HPos.CENTER);
+						GridPane.setValignment(mView, VPos.CENTER);
+						partie.timeToSetSbirePath();
+						
 						rayon.setVisible(false);
 						stage1.close();
 					}
@@ -244,12 +253,12 @@ public class Main extends Application {
 		}
 		
 		public void setCurrentX(double currentX){
-			//this.currentX=currentX;
+			this.currentX=currentX;
 			rayon.setCenterX(currentX);
 		}
 		
 		public void setCurrentY(double currentY){
-			//this.currentY=currentY;
+			this.currentY=currentY;
 			rayon.setCenterY(currentY);
 		}
 	}
