@@ -15,8 +15,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import modele.GameFactory;
 import modele.PartieInterface;
-import modele.SbireInterface;
-import modele.TourSideInterface;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
