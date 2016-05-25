@@ -1,6 +1,8 @@
-package application;
+package modele;
 
-public class Tour extends Thread {
+import application.OnTourShot;
+
+class Tour extends Thread implements TourInterface {
 	private static final long INTERVAL_CHECK = 500;
 	private TourSideInterface mPartie;
 	private int rowIndex;
@@ -27,6 +29,7 @@ public class Tour extends Thread {
 		mPartie.add(this);
 	}
 
+	@Override
 	public int getRowIndex() {
 		return rowIndex;
 	}
@@ -35,6 +38,7 @@ public class Tour extends Thread {
 		this.rowIndex = rowIndex;
 	}
 
+	@Override
 	public int getColumnIndex() {
 		return columnIndex;
 	}
@@ -89,6 +93,7 @@ public class Tour extends Thread {
 		}
 	}
 
+	@Override
 	public void destroy() {
 		mPartie.remove(this);
 		isLooking = false;

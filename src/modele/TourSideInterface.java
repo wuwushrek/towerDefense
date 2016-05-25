@@ -1,4 +1,4 @@
-package application;
+package modele;
 
 public interface TourSideInterface {
 	boolean add(Tour tour);

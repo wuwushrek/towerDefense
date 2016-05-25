@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.util.Duration;
+import modele.SbireInterface;
 import pathfinder.Path;
 import pathfinder.Path.Step;
 
@@ -30,7 +31,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
 	private final static long BASIC_STEP_TIME = 1500;
 	
-	private Sbire mSbire;
+	private SbireInterface mSbire;
 	private ProgressBar mProgress;
 	private ImageView mImage;
 	
@@ -41,7 +42,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	private DoubleProperty currentY = new SimpleDoubleProperty();
 	private ChangeListener<Number> listener;
 	
-	public SbireView(String pathFile, Sbire sbire , int width , int height){
+	public SbireView(Image im, SbireInterface sbire , int width , int height){
 		super();
 		this.mSbire=sbire;
 
@@ -49,7 +50,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		this.setLayoutY(mSbire.getRowIndex()*Main.TILE_SIZE_Y.get());
 		this.setAlignment(Pos.CENTER);
 		
-		mImage = new ImageView(new Image(pathFile));
+		mImage = new ImageView(im);
 		mImage.setPreserveRatio(true);
 		mImage.setSmooth(true);
 		mImage.setCache(true);
@@ -80,7 +81,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		this.translateYProperty().addListener(listener);
 		
 		mMovement = new PathTransition();
-		mMovement.setDuration(Duration.millis((long) (BASIC_STEP_TIME*Sbire.getPath().getLength()*mSbire.getVitesse())));
+		mMovement.setDuration(Duration.millis((long) (BASIC_STEP_TIME*mSbire.getPath().getLength()*mSbire.getVitesse())));
 		mMovement.setNode(this);
 		mMovement.setAutoReverse(false);
 		mMovement.setInterpolator(Interpolator.LINEAR);
@@ -141,7 +142,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	}
 	
 	public void initPathAnimation(){
-		initPathAnimation(Sbire.getPath());
+		initPathAnimation(mSbire.getPath());
 	}
 	public void play(){
 		//mMoves.play();

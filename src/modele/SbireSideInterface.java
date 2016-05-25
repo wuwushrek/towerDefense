@@ -1,4 +1,4 @@
-package application;
+package modele;
 
 public interface SbireSideInterface {
 	boolean remove(Sbire sbire , boolean isDead);

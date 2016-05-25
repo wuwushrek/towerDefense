@@ -10,24 +10,25 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import modele.TourInterface;
 
 public class TourView extends StackPane implements OnTourShot{
-	private Tour mTour;
+	private TourInterface mTour;
 	private ImageView mImage;
 
 	private Circle boule= new Circle();
 	
-	public TourView(String pathImage, Tour tour){
+	public TourView(TourInterface tour, Image tourIm){
 		super();
-		mImage = new ImageView(new Image(pathImage));
+		
+		mTour = tour;
+		mImage = new ImageView(tourIm);
 		mImage.setPreserveRatio(true);
 		mImage.setSmooth(true);
 		mImage.setCache(true);
 		
-		mImage.fitWidthProperty().bind(Main.TILE_SIZE_X);
-		mImage.fitHeightProperty().bind(Main.TILE_SIZE_Y);
-		//this.setFitWidth(30);
-		//this.setFitHeight(20);
+		mImage.fitWidthProperty().bind(Main.TILE_SIZE_X.multiply(1.5));
+		mImage.fitHeightProperty().bind(Main.TILE_SIZE_Y.multiply(1.5));
 
 		boule = new Circle();
 		boule.setRadius(Main.TILE_SIZE_X.get()/18);
@@ -35,7 +36,6 @@ public class TourView extends StackPane implements OnTourShot{
 		boule.setVisible(false);
 		
 		getChildren().addAll(mImage,boule);
-		this.mTour=tour;
 		mTour.setOnTourShot(this);
 		
 	}
@@ -50,7 +50,6 @@ public class TourView extends StackPane implements OnTourShot{
 	
 	@Override
 	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
-		// TODO Auto-generated method stub
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
@@ -73,13 +72,7 @@ public class TourView extends StackPane implements OnTourShot{
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				//getChildren().remove(boule);
-				//boule = new Circle();
-				//boule.setRadius(Main.TILE_SIZE_X.get()/18);
-				//boule.setFill(Color.BLACK);
 				boule.setVisible(false);
-				//getChildren().add(boule);
 			}
 		});
 	}

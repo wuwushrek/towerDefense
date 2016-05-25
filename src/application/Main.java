@@ -1,7 +1,9 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
@@ -11,6 +13,10 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import modele.GameFactory;
+import modele.PartieInterface;
+import modele.SbireInterface;
+import modele.TourSideInterface;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -27,6 +33,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 public class Main extends Application {
+	
+	public static final Map<String,Integer[]> infosTour = new HashMap<String,Integer[]>();
+	public static final Map<String,Image> infosImage = new HashMap<String,Image>();
 
 	private static final int[] startCoord = new int[] { 8, 0 };
 	private static final int[] endCoord = new int[] { 2, 5 };
@@ -41,7 +50,7 @@ public class Main extends Application {
 	public static final IntegerProperty TILE_SIZE_Y = new SimpleIntegerProperty();
 
 	List<SbireView> mSbires = new ArrayList<SbireView>();
-	private final Partie partie = new Partie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
+	private final PartieInterface partie = GameFactory.createPartie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
 
 	private final Group root = new Group();
 	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
@@ -50,6 +59,36 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
+		infosTour.put("tour_archer", new Integer[]{9,20,100,500});
+		infosImage.put("tour_archer",new Image(getClass().getResource("archer2.png").toExternalForm()));
+		infosTour.put("tour_canonportee", new Integer[]{16,40,200,600});
+		infosImage.put("tour_canonportee",new Image(getClass().getResource("portee_longue_faible.png").toExternalForm()));
+		infosTour.put("tour_canonporteepuiss", new Integer[]{16,50,300,500});
+		infosImage.put("tour_canonporteepuiss",new Image(getClass().getResource("portee_longue_puissant.png").toExternalForm()));
+		infosTour.put("canon_simple", new Integer[]{9,40,250,600});
+		infosImage.put("canon_simple",new Image(getClass().getResource("canon_simple.png").toExternalForm()));
+		infosTour.put("canon_sup", new Integer[]{9,50,300,500});
+		infosImage.put("canon_sup",new Image(getClass().getResource("canon_sup.png").toExternalForm()));
+		infosTour.put("canon_renforce", new Integer[]{9,60,400,500});
+		infosImage.put("canon_renforce",new Image(getClass().getResource("canon_renforce.png").toExternalForm()));
+		infosTour.put("flechette_mortier", new Integer[]{16,60,600,400});
+		infosImage.put("flechette_mortier",new Image(getClass().getResource("flechette_mortier.png").toExternalForm()));
+		infosTour.put("laser", new Integer[]{16,20,300,400});
+		infosImage.put("laser",new Image(getClass().getResource("tourelle_laser.png").toExternalForm()));
+		infosTour.put("mortier", new Integer[]{25,30,700,700});
+		infosImage.put("mortier",new Image(getClass().getResource("mortier_tower.png").toExternalForm()));
+		infosTour.put("mortier_gold", new Integer[]{25,40,1000,650});
+		infosImage.put("mortier_gold",new Image(getClass().getResource("mortier_gold.png").toExternalForm()));
+		infosTour.put("tonnerre", new Integer[]{16,30,500,400});
+		infosImage.put("tonnerre",new Image(getClass().getResource("tonnerre_tour.png").toExternalForm()));
+		infosTour.put("tonnerre_plus", new Integer[]{16,40,600,350});
+		infosImage.put("tonnerre_plus",new Image(getClass().getResource("tonnerre_tour2.png").toExternalForm()));
+		infosTour.put("tonnerre_plus_gold", new Integer[]{20,40,800,400});
+		infosImage.put("tonnerre_plus_gold",new Image(getClass().getResource("portee_powerful_tonnerre.png").toExternalForm()));
+		infosTour.put("triple_tonnerre", new Integer[]{16,50,1000,400});
+		infosImage.put("triple_tonnerre",new Image(getClass().getResource("powerful_tonnerre.png").toExternalForm()));
+		
+		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
 		Scene scene = new Scene(root, WIDTH, HEIGHT, Color.GRAY);
 
 		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
@@ -60,6 +99,7 @@ public class Main extends Application {
 
 		TILE_SIZE_X.bind(scene.widthProperty().divide(COLUMN_COUNT));
 		TILE_SIZE_Y.bind(scene.heightProperty().divide(ROW_COUNT));
+		
 		//Menu tours
 		mTourMenu = new TourMenu();
 		Scene sceneMenu = new Scene(mTourMenu , TourMenu.WIDTH,TourMenu.HEIGHT);
@@ -71,43 +111,39 @@ public class Main extends Application {
 		mGrid.prefWidthProperty().bind(scene.widthProperty());
 		mGrid.prefHeightProperty().bind(scene.heightProperty());
 		ColumnConstraints cc = new ColumnConstraints();
-		// cc.setFillWidth(true);
 		cc.prefWidthProperty().bind(TILE_SIZE_X);
-		// cc.setHgrow(Priority.ALWAYS);
 
 		for (int i = 0; i < COLUMN_COUNT; i++) {
 			mGrid.getColumnConstraints().add(cc);
 		}
 		RowConstraints rc = new RowConstraints();
 		rc.prefHeightProperty().bind(TILE_SIZE_Y);
-		// rc.setFillHeight(true);
-		// rc.setVgrow(Priority.ALWAYS);
 
 		for (int i = 0; i < ROW_COUNT; i++) {
 			mGrid.getRowConstraints().add(rc);
 		}
 		
-		Tour tour1 = new Tour(partie, 2, 4, 9, 30, 1000);
-		Tour tour2 = new Tour(partie, 4, 3, 9, 10, 1000);
-		tour1.launch();
-		tour2.launch();
-		TourView mView = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour1);
-		TourView mView2 = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour2);
-		partie.timeToSetSbirePath();
-		mGrid.add(mView, mView.getColumn(), mView.getRow());
-		GridPane.setHalignment(mView, HPos.CENTER);
-		GridPane.setValignment(mView, VPos.CENTER);
+		//Tour tour1 = new Tour(partie, 2, 4, 9, 30, 1000);
+		//Tour tour2 = new Tour(partie, 4, 3, 9, 10, 1000);
+		//tour1.launch();
+		//tour2.launch();
+		//TourView mView = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour1);
+		//TourView mView2 = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour2);
+		//partie.timeToSetSbirePath();
+		//mGrid.add(mView, mView.getColumn(), mView.getRow());
+		//GridPane.setHalignment(mView, HPos.CENTER);
+		//GridPane.setValignment(mView, VPos.CENTER);
 
-		GridPane.setHalignment(mView2, HPos.CENTER);
-		GridPane.setValignment(mView2, VPos.CENTER);
+		//GridPane.setHalignment(mView2, HPos.CENTER);
+		//GridPane.setValignment(mView2, VPos.CENTER);
 
-		mGrid.add(mView2, mView2.getColumn(), mView2.getRow());
-		for (Sbire sbire : partie.mSbires) {
-			SbireView sb = new SbireView(getClass().getResource("minion.png").toExternalForm(), sbire, 20, 20);
+		//mGrid.add(mView2, mView2.getColumn(), mView2.getRow());
+		/*for (SbireInterface sbire : partie.getSbireList()) {
+			SbireView sb = new SbireView(infosImage.get("minion"), sbire, 20, 20);
 			sbire.setOnSbireDestroy(sb);
 			root.getChildren().add(sb);
 			mSbires.add(sb);
-		}
+		}*/
 
 		mGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -121,14 +157,12 @@ public class Main extends Application {
 
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
 							for (SbireView sbire : mSbires) {
 								sbire.initPathAnimation();
 								sbire.play();
 								try {
 									Thread.sleep(1200);
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}
@@ -192,10 +226,10 @@ public class Main extends Application {
 			tourMenu.setPrefRows(3);
 			tourMenu.setPrefColumns(4);
 
-			for (int i = 0; i < 12; i++) {
+			for (String name : infosTour.keySet()) {
 				SelectTourMenuItem menuItem = new SelectTourMenuItem(
-						new Image(getClass().getResource("tourelle.png").toExternalForm()), "Simple Tourelle", 100, 50, 9,
-						500l);
+						infosImage.get(name), name,infosTour.get(name)[1], infosTour.get(name)[2],
+						infosTour.get(name)[0],infosTour.get(name)[3]);
 				menuItem.setOnMouseEntered(new EventHandler<MouseEvent>(){
 					@Override
 					public void handle(MouseEvent ev) {
@@ -217,9 +251,9 @@ public class Main extends Application {
 					public void handle(MouseEvent e){
 						
 
-						Tour tour = new Tour(partie,(int) (currentY/TILE_SIZE_Y.get()), (int) (currentX/TILE_SIZE_X.get()), 12, 30, 200);
-						TourView mView = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour);
-						tour.launch();
+						//Tour tour = new Tour(partie,(int) (currentY/TILE_SIZE_Y.get()), (int) (currentX/TILE_SIZE_X.get()), 12, 30, 200);
+						TourView mView = createTour(name,(int) (currentY/TILE_SIZE_Y.get()),(int) (currentX/TILE_SIZE_X.get()));
+						//lancement des tours
 						mGrid.add(mView, mView.getColumn(), mView.getRow());
 						GridPane.setHalignment(mView, HPos.CENTER);
 						GridPane.setValignment(mView, VPos.CENTER);
@@ -260,6 +294,39 @@ public class Main extends Application {
 		public void setCurrentY(double currentY){
 			this.currentY=currentY;
 			rayon.setCenterY(currentY);
+		}
+		
+		public TourView createTour(String name , int rowIndex , int columnIndex ){
+			if(name.equals("tour_archer")){
+				return new TourView_Acher(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("tour_canonportee")){
+				return new TourView_CannonLPortee(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("tour_canonporteepuiss")){
+				return new TourView_CanonLPorteePuiss(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("canon_simple")){
+				return new TourView_CanonSimple(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("canon_sup")){
+				return new TourView_CanonSup(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("canon_renforce")){
+				return new TourView_CanonSupRenforce(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("flechette_mortier")){
+				return new TourView_FlechetteMortier(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("laser")){
+				return new TourView_Laser(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("mortier")){
+				return new TourView_Mortier(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("mortier_gold")){
+				return new TourView_MortierGold(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("tonnerre")){
+				return new TourView_Tonnerre(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("tonnerre_plus")){
+				return new TourView_TonnerrePlus(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("tonnerre_plus_gold")){
+				return new TourView_TonnerrePlusGold(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}else if(name.equals("triple_tonnerre")){
+				return new TourView_TripleTonnere(rowIndex ,columnIndex,partie.getTourSideInterface());
+			}
+			return null;
 		}
 	}
 }

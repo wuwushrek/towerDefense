@@ -1,4 +1,4 @@
-package application;
+package modele;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import pathfinder.Path;
 import pathfinder.PathFinder;
 import pathfinder.TileBasedMap;
 
-public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface{
+class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, PartieInterface{
 	private final static int[] depart = new int[2];
 	private final static int[] arrivee = new int[2];
 
@@ -41,7 +41,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 	private IntegerProperty level;
 	
 	List<Tour> mTours;
-	List<Sbire> mSbires;
+	List<SbireInterface> mSbires;
 	
 	volatile boolean isAlive = true;
 	volatile boolean LEVEL_DONE =false;
@@ -63,12 +63,13 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		score = new SimpleIntegerProperty(0);
 		
 		mTours = new ArrayList<Tour>();
-		mSbires = new CopyOnWriteArrayList<Sbire>();//new ArrayList<Sbire>();
+		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		resetMap();
 		initSbires();
 		pathFinder = new AStarPathFinder(this,500,false);
 	}
 	
+	@Override
 	public IntegerProperty levelProperty(){
 		return level;
 	}
@@ -77,6 +78,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		level.set(level.get()+1);
 	}
 	
+	@Override
 	public IntegerProperty sbireTueeProperty(){
 		return sbireTuee;
 	}
@@ -85,6 +87,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		sbireTuee.set(sbireTuee.get()+1);
 	}
 	
+	@Override
 	public IntegerProperty argentProperty(){
 		return argent;
 	}
@@ -102,6 +105,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		return true;
 	}
 	
+	@Override
 	public IntegerProperty pointVieProperty(){
 		return pointVie;
 	}
@@ -308,7 +312,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 	}
 	
 	public void initSbires(){
-		mSbires = new CopyOnWriteArrayList<Sbire>();//new ArrayList<Sbire>();
+		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		for(int i = 0 ; i<sbireByLevel[level.get()]; i++){
 			Sbire sbire = new Sbire(this,100,depart[0],depart[1],50,100, 5 ,1.0);
 			mSbires.add(sbire);
@@ -329,10 +333,10 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		return false;
 	}
 	
-	private Sbire findSbire(int rowIndex, int columnIndex, int porteeDist){
-		Sbire res=null;
+	private TourTarget findSbire(int rowIndex, int columnIndex, int porteeDist){
+		SbireInterface res=null;
 		int minDistArrive = Integer.MAX_VALUE;
-		for(Sbire sbire: mSbires){
+		for(SbireInterface sbire: mSbires){
 			int dist = (sbire.getRowIndex()-rowIndex)*(sbire.getRowIndex()-rowIndex)+
 					(sbire.getColumnIndex()-columnIndex)*(sbire.getColumnIndex()-columnIndex);
 			int dist2 = (sbire.getRowIndex()-arrivee[0])*(sbire.getRowIndex()-arrivee[0])+
@@ -342,7 +346,7 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 				res=sbire;
 			}
 		}
-		return res;
+		return (Sbire) res;
 	}
 	/*private Sbire findSbire(int rowIndex , int columnIndex){
 		for(Sbire sbire: mSbires){
@@ -382,21 +386,30 @@ public class Partie implements TileBasedMap , TourSideInterface, SbireSideInterf
 		return res;
 	}
 	
+	@Override
+	public List<SbireInterface> getSbireList(){
+		return mSbires;
+	}
+	
 	public void addSbire(int rowIndex , int columnIndex){
 		Sbire sbire = new Sbire(this,100,rowIndex,columnIndex,50,100, 5,1.0);
 		getAndApplyMoveForSbire(0,0,rowIndex,columnIndex,true);
 		mSbires.add(sbire);
 	}
 	
-	public void sbireNextStep(){
-		System.out.println(mSbires.size());
-		for(Sbire sbire: mSbires){
-			sbire.moveNext();
-		}
-	}
 	
 	public void timeToSetSbirePath(){
 		Path path = pathFinder.findPath(new Mover(), depart[0], depart[1], arrivee[0], arrivee[1]);
 		Sbire.setPath(path);
+	}
+
+	@Override
+	public SbireSideInterface getSbireSideInterface() {
+		return this;
+	}
+
+	@Override
+	public TourSideInterface getTourSideInterface() {
+		return this;
 	}
 }

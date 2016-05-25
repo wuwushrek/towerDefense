@@ -1,8 +1,8 @@
-package application;
+package modele;
 
 import javafx.beans.property.DoubleProperty;
 
-public interface TourTarget {
+interface TourTarget {
 	boolean decrementPointDeVie(int pointVie);
 	int getRowIndex();
 	int getColumnIndex();

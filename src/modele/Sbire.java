@@ -1,12 +1,13 @@
-package application;
+package modele;
 
+import application.OnSbireMoveAndDestroy;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import pathfinder.Path;
 import pathfinder.Path.Step;
 
-public class Sbire implements TourTarget{
+class Sbire implements TourTarget , SbireInterface{
 	
 	private static Path mPath;
 	private int currentPosInPath =1;
@@ -145,7 +146,7 @@ public class Sbire implements TourTarget{
 		return vitesse;
 	}
 	
-	public static Path getPath(){
+	public Path getPath(){
 		return mPath;
 	}
 	@Override
@@ -165,13 +166,11 @@ public class Sbire implements TourTarget{
 
 	@Override
 	public DoubleProperty xProperty() {
-		// TODO Auto-generated method stub
 		return sbireDestroy.xPosProperty();
 	}
 
 	@Override
 	public DoubleProperty yProperty() {
-		// TODO Auto-generated method stub
 		return sbireDestroy.yPosProperty();
 	}
 }
