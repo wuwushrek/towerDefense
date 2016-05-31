@@ -106,6 +106,7 @@ public class Main extends Application {
 		infosTour.put("triple_tonnerre", new Integer[]{16,50,1000,400});
 		infosImage.put("triple_tonnerre",new Image(getClass().getResource("powerful_tonnerre.png").toExternalForm()));
 		
+		infosImage.put("boule_bleu",  new Image(getClass().getResource("boule_bleu.png").toExternalForm()));
 		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
 		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, Color.GRAY);
 

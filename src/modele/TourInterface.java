@@ -8,4 +8,6 @@ public interface TourInterface {
 	int getColumnIndex();
 	void destroy();
 	void launch();
+	long getIntervalCheck();
+	void setIntervalCheck(long pause);
 }

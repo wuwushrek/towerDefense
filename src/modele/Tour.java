@@ -71,11 +71,13 @@ class Tour extends Thread implements TourInterface {
 		this.cost = cost;
 	}
 
-	public long getInterval_check() {
+	@Override
+	public long getIntervalCheck() {
 		return interval_check;
 	}
 
-	public void seIntervalCheck(long intervalTime) {
+	@Override 
+	public void setIntervalCheck(long intervalTime) {
 		interval_check = intervalTime;
 	}
 
