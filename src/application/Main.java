@@ -5,26 +5,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import modele.GameFactory;
 import modele.PartieInterface;
+import modele.SbireInterface;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -48,11 +63,16 @@ public class Main extends Application {
 	public static final IntegerProperty TILE_SIZE_Y = new SimpleIntegerProperty();
 
 	List<SbireView> mSbires = new ArrayList<SbireView>();
+	List<TourView> mTours = new ArrayList<TourView>();
 	private final PartieInterface partie = GameFactory.createPartie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
 
+	private static final Group parentGroup= new Group();
+	private StackPane mainGroup = new StackPane();
 	private final Group root = new Group();
 	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
 	private final GridPane mGrid = new GridPane();
+	private final HBox menuOption = new HBox(10);
+	private final Label chronometerLab = new Label();
 	private TourMenu mTourMenu;
 	
 	@Override
@@ -87,7 +107,7 @@ public class Main extends Application {
 		infosImage.put("triple_tonnerre",new Image(getClass().getResource("powerful_tonnerre.png").toExternalForm()));
 		
 		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
-		Scene scene = new Scene(root, WIDTH, HEIGHT, Color.GRAY);
+		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, Color.GRAY);
 
 		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
 		SelectTourMenuItem.setDamageImage(new Image(getClass().getResource("bullet_speed.png").toExternalForm()));
@@ -120,28 +140,6 @@ public class Main extends Application {
 		for (int i = 0; i < ROW_COUNT; i++) {
 			mGrid.getRowConstraints().add(rc);
 		}
-		
-		//Tour tour1 = new Tour(partie, 2, 4, 9, 30, 1000);
-		//Tour tour2 = new Tour(partie, 4, 3, 9, 10, 1000);
-		//tour1.launch();
-		//tour2.launch();
-		//TourView mView = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour1);
-		//TourView mView2 = new TourView(this.getClass().getResource("tourelle.png").toExternalForm(), tour2);
-		//partie.timeToSetSbirePath();
-		//mGrid.add(mView, mView.getColumn(), mView.getRow());
-		//GridPane.setHalignment(mView, HPos.CENTER);
-		//GridPane.setValignment(mView, VPos.CENTER);
-
-		//GridPane.setHalignment(mView2, HPos.CENTER);
-		//GridPane.setValignment(mView2, VPos.CENTER);
-
-		//mGrid.add(mView2, mView2.getColumn(), mView2.getRow());
-		/*for (SbireInterface sbire : partie.getSbireList()) {
-			SbireView sb = new SbireView(infosImage.get("minion"), sbire, 20, 20);
-			sbire.setOnSbireDestroy(sb);
-			root.getChildren().add(sb);
-			mSbires.add(sb);
-		}*/
 
 		mGrid.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -184,7 +182,25 @@ public class Main extends Application {
 
 		});
 
+		chronometerLab.textProperty().bind(time);
+		
+		menuOption.getChildren().add(chronometerLab);
+		menuOption.setAlignment(Pos.CENTER);
+		menuOption.prefWidthProperty().bind(scene.widthProperty());
+		
 		root.getChildren().addAll(mGrid);
+		mainGroup.setBackground(new Background(new BackgroundFill(Color.GRAY,null,null)));
+		mainGroup.setAlignment(chronometerLab,Pos.TOP_CENTER);
+		mainGroup.getChildren().addAll(root,chronometerLab);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+		chronometer.setAutoReverse(true);
+		chronometer.setCycleCount(Animation.INDEFINITE);
+		chronometer.play();
+		
+		parentGroup.getChildren().add(mainGroup);
+		
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
@@ -251,6 +267,7 @@ public class Main extends Application {
 
 						//Tour tour = new Tour(partie,(int) (currentY/TILE_SIZE_Y.get()), (int) (currentX/TILE_SIZE_X.get()), 12, 30, 200);
 						TourView mView = createTour(name,(int) (currentY/TILE_SIZE_Y.get()),(int) (currentX/TILE_SIZE_X.get()));
+						mTours.add(mView);
 						//lancement des tours
 						mGrid.add(mView, mView.getColumn(), mView.getRow());
 						GridPane.setHalignment(mView, HPos.CENTER);
@@ -327,4 +344,44 @@ public class Main extends Application {
 			return null;
 		}
 	}
+	
+	public static void addNode(Node node){
+		parentGroup.getChildren().add(node);
+	}
+	public static void addAll(List<Group> nodes){
+		parentGroup.getChildren().addAll(nodes);
+	}
+	
+	public static void removeNode(Node node){
+		parentGroup.getChildren().remove(node);
+	}
+	
+	private final String selectionTime = "00:10";
+	private final StringProperty time = new SimpleStringProperty(selectionTime);
+	private int compteur = 10;
+	private final Timeline chronometer = new Timeline(new KeyFrame(Duration.millis(1000),
+			new EventHandler<ActionEvent>(){
+		@Override
+		public void handle(ActionEvent t){
+			compteur--;
+			int min = compteur/60;
+			int sec = compteur % 60;
+			time.set("0"+min+":"+sec);
+			if(compteur==0){
+				partie.initSbiresOnLevel();
+				for (SbireInterface sbire : partie.getSbireList()) {
+					SbireView sb = new SbireView(infosImage.get("minion"), sbire, 20, 20);
+					sbire.setOnSbireDestroy(sb);
+					root.getChildren().add(sb);
+					mSbires.add(sb);
+				}
+				partie.timeToSetSbirePath();
+				stage1.close();
+				mTourMenu.setDisable(true);
+				compteur =2*60;
+				time.set(selectionTime);
+				chronometer.stop();
+			}
+		}
+	}));
 }

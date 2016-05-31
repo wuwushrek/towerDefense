@@ -7,4 +7,5 @@ public interface TourInterface {
 	int getRowIndex();
 	int getColumnIndex();
 	void destroy();
+	void launch();
 }

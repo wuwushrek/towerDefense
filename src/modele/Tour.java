@@ -99,6 +99,7 @@ class Tour extends Thread implements TourInterface {
 		isLooking = false;
 	}
 
+	@Override
 	public void launch() {
 		isLooking = true;
 		this.start();

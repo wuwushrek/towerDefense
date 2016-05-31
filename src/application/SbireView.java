@@ -70,8 +70,8 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				// TODO Auto-generated method stub
 				Bounds boundsInScene = localToScene(getBoundsInLocal());
-		        double xInScene = boundsInScene.getMinX()-boundsInScene.getWidth()/2;
-		        double yInScene = boundsInScene.getMinY();//+boundsInScene.getHeight()/2;
+		        double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
+		        double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
 		        currentX.set(xInScene);
 		        currentY.set(yInScene);
 			}

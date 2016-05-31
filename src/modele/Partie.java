@@ -65,7 +65,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		mTours = new ArrayList<Tour>();
 		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		resetMap();
-		initSbires();
+		//initSbires();
 		pathFinder = new AStarPathFinder(this,500,false);
 	}
 	
@@ -311,10 +311,11 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		}
 	}
 	
-	public void initSbires(){
+	@Override
+	public void initSbiresOnLevel(){
 		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		for(int i = 0 ; i<sbireByLevel[level.get()]; i++){
-			Sbire sbire = new Sbire(this,100,depart[0],depart[1],50,100, 5 ,1.0);
+			Sbire sbire = new Sbire(this,100,depart[0],depart[1],25,100, 5 ,1.0);
 			mSbires.add(sbire);
 		}
 		map[depart[0]][depart[1]] = sbireByLevel[level.get()];

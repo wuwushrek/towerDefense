@@ -12,5 +12,6 @@ public interface PartieInterface {
 	SbireSideInterface getSbireSideInterface();
 	TourSideInterface getTourSideInterface();
 	void timeToSetSbirePath();
+	void initSbiresOnLevel();
 	List<SbireInterface> getSbireList();
 }
