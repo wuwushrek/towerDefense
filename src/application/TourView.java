@@ -13,6 +13,7 @@ import modele.TourInterface;
 public class TourView extends StackPane implements OnTourShot{
 	protected TourInterface mTour;
 	private ImageView mImage;
+	protected static final long animDuration = 250;
 
 	private Circle boule= new Circle();
 	

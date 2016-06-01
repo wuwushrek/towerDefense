@@ -14,6 +14,7 @@ public class TourView_MortierGold extends TourView{
 				Main.infosTour.get("mortier_gold")[1],
 				Main.infosTour.get("mortier_gold")[2]),
 				Main.infosImage.get("mortier_gold"));
+		mTour.setIntervalCheck(Main.infosTour.get("mortier_gold")[3]);
 	}
 	@Override
 	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget){
@@ -38,6 +39,6 @@ public class TourView_MortierGold extends TourView{
 				Main.addNode(balle);
 			}
 		});
-		TourView_Mortier.animate(xInScene , yInScene,xValueTarget , yValueTarget,mTour.getIntervalCheck(),balle);
+		TourView_Mortier.animate(xInScene , yInScene,xValueTarget , yValueTarget,150,balle);
 	}
 }

@@ -1,6 +1,7 @@
 package application;
 
 import javafx.animation.PathTransition;
+import javafx.animation.PathTransition.OrientationType;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
@@ -28,6 +29,7 @@ public class TourView_CanonSimple extends TourView {
 				Main.infosImage.get("canon_simple"));
 		mTour.setIntervalCheck(Main.infosTour.get("canon_simple")[3]);
 		bloom.setThreshold(0.6);
+		//setRotate(90);
 	}
 	
 	@Override
@@ -51,29 +53,30 @@ public class TourView_CanonSimple extends TourView {
 		Point2D end = new Point2D(xValueTarget.get(), yValueTarget.get());
 		Point2D substract = end.subtract(start);
 		Point2D axeX = new Point2D(1,0);
-		double angleRotate = axeX.angle(substract);
+		double angleRotate = substract.getY()<0?-axeX.angle(substract):axeX.angle(substract);
+		System.out.println("Angle rotate en degree: "+angleRotate);
 		
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				setRotate(90+angleRotate);
+				setRotate(angleRotate+90);
 				Main.addNode(balls);
 			}
 		});
 		animate(xInScene,yInScene,xValueTarget , yValueTarget,balls);
 	}
 	
-	public void animate(double xFrom , double yFrom , DoubleProperty xTo , DoubleProperty yTo,final Node node){
+	public static void animate(double xFrom , double yFrom , DoubleProperty xTo , DoubleProperty yTo,final Node node){
 		Path path = new Path();
 		path.getElements().add(new MoveTo(xFrom,yFrom));
 		LineTo dest = new LineTo();
 		dest.xProperty().bind(xTo);
 		dest.yProperty().bind(yTo);
 		path.getElements().add(dest);
-		PathTransition translation = new PathTransition(Duration.millis(mTour.getIntervalCheck()),path);
+		PathTransition translation = new PathTransition(Duration.millis(animDuration),path);
 		translation.setNode(node);
 		translation.setAutoReverse(true);
-		translation.setDuration(Duration.millis(mTour.getIntervalCheck()/2));
+		translation.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
 		translation.setOnFinished(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {

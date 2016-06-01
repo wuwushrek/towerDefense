@@ -17,7 +17,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	private final static int[] arrivee = new int[2];
 
 	//private static final int MAX_LEVEL = 3;
-	private final static int[] sbireByLevel = new int[]{15 , 25, 35};
+	private final static int[] sbireByLevel = new int[]{25 , 25, 35};
 	private static final int MAX_VIE = 100;
 	private static final int MAX_ARGENT =3000;
 	
@@ -393,7 +393,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	}
 	
 	public void addSbire(int rowIndex , int columnIndex){
-		Sbire sbire = new Sbire(this,100,rowIndex,columnIndex,50,100, 5,1.0);
+		Sbire sbire = new Sbire(this,100,rowIndex,columnIndex,50,300, 5,1.0);
 		getAndApplyMoveForSbire(0,0,rowIndex,columnIndex,true);
 		mSbires.add(sbire);
 	}

@@ -47,6 +47,7 @@ import javafx.scene.shape.Polygon;
 
 public class Main extends Application {
 	
+	//A modifier tour qui decrement avant que arme fait effet
 	public static final Map<String,Integer[]> infosTour = new HashMap<String,Integer[]>();
 	public static final Map<String,Image> infosImage = new HashMap<String,Image>();
 
@@ -77,38 +78,39 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		infosTour.put("tour_archer", new Integer[]{9,20,100,500});
+		infosTour.put("tour_archer", new Integer[]{9,10,100,1100});
 		infosImage.put("tour_archer",new Image(getClass().getResource("archer2.png").toExternalForm()));
-		infosTour.put("tour_canonportee", new Integer[]{16,40,200,600});
+		infosTour.put("tour_canonportee", new Integer[]{11,15,200,1000});
 		infosImage.put("tour_canonportee",new Image(getClass().getResource("portee_longue_faible.png").toExternalForm()));
-		infosTour.put("tour_canonporteepuiss", new Integer[]{16,50,300,500});
+		infosTour.put("tour_canonporteepuiss", new Integer[]{9,25,300,1300});
 		infosImage.put("tour_canonporteepuiss",new Image(getClass().getResource("portee_longue_puissant.png").toExternalForm()));
-		infosTour.put("canon_simple", new Integer[]{9,40,250,600});
+		infosTour.put("canon_simple", new Integer[]{9,10,100,1100});
 		infosImage.put("canon_simple",new Image(getClass().getResource("canon_simple.png").toExternalForm()));
-		infosTour.put("canon_sup", new Integer[]{9,50,300,500});
+		infosTour.put("canon_sup", new Integer[]{9,15,300,1000});
 		infosImage.put("canon_sup",new Image(getClass().getResource("canon_sup.png").toExternalForm()));
-		infosTour.put("canon_renforce", new Integer[]{9,60,400,500});
+		infosTour.put("canon_renforce", new Integer[]{9,25,400,1300});
 		infosImage.put("canon_renforce",new Image(getClass().getResource("canon_renforce.png").toExternalForm()));
-		infosTour.put("flechette_mortier", new Integer[]{16,60,600,400});
+		infosTour.put("flechette_mortier", new Integer[]{16,15,600,1300});
 		infosImage.put("flechette_mortier",new Image(getClass().getResource("flechette_mortier.png").toExternalForm()));
-		infosTour.put("laser", new Integer[]{16,20,300,400});
+		infosTour.put("laser", new Integer[]{12,5,300,800});
 		infosImage.put("laser",new Image(getClass().getResource("tourelle_laser.png").toExternalForm()));
-		infosTour.put("mortier", new Integer[]{25,30,700,700});
+		infosTour.put("mortier", new Integer[]{16,10,700,1300});
 		infosImage.put("mortier",new Image(getClass().getResource("mortier_tower.png").toExternalForm()));
-		infosTour.put("mortier_gold", new Integer[]{25,40,1000,650});
+		infosTour.put("mortier_gold", new Integer[]{16,20,1000,1200});
 		infosImage.put("mortier_gold",new Image(getClass().getResource("mortier_gold.png").toExternalForm()));
-		infosTour.put("tonnerre", new Integer[]{16,30,500,400});
+		infosTour.put("tonnerre", new Integer[]{9,20,500,1300});
 		infosImage.put("tonnerre",new Image(getClass().getResource("tonnerre_tour.png").toExternalForm()));
-		infosTour.put("tonnerre_plus", new Integer[]{16,40,600,350});
+		infosTour.put("tonnerre_plus", new Integer[]{9,20,800,800});
 		infosImage.put("tonnerre_plus",new Image(getClass().getResource("tonnerre_tour2.png").toExternalForm()));
-		infosTour.put("tonnerre_plus_gold", new Integer[]{20,40,800,400});
+		infosTour.put("tonnerre_plus_gold", new Integer[]{12,25,800,1300});
 		infosImage.put("tonnerre_plus_gold",new Image(getClass().getResource("portee_powerful_tonnerre.png").toExternalForm()));
-		infosTour.put("triple_tonnerre", new Integer[]{16,50,1000,400});
+		infosTour.put("triple_tonnerre", new Integer[]{12,30,1000,1300});
 		infosImage.put("triple_tonnerre",new Image(getClass().getResource("powerful_tonnerre.png").toExternalForm()));
 		
 		infosImage.put("boule_bleu",  new Image(getClass().getResource("boule_bleu.png").toExternalForm()));
 		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
-		infosImage.put("minion", new Image(getClass().getResource("boule_feu.png").toExternalForm()));
+		infosImage.put("boule_feu", new Image(getClass().getResource("boule_feu.png").toExternalForm()));
+		infosImage.put("flechette", new Image(getClass().getResource("flechette.png").toExternalForm()));
 		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, Color.GRAY);
 
 		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
@@ -236,7 +238,7 @@ public class Main extends Application {
 			//rayon.setCenterY(currentY);
 			rayon.setVisible(false);
 			
-			root.getChildren().add(rayon);
+			parentGroup.getChildren().add(rayon);
 			
 			tourMenu = new TilePane();
 			tourMenu.setPrefRows(3);

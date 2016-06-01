@@ -29,7 +29,7 @@ import pathfinder.Path.Step;
 
 public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
-	private final static long BASIC_STEP_TIME = 1500;
+	private final static long BASIC_STEP_TIME = 2500;
 	
 	private SbireInterface mSbire;
 	private ProgressBar mProgress;

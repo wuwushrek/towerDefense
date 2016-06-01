@@ -56,8 +56,8 @@ public class TourView_Tonnerre extends TourView {
 		return ret;
 	}
 	
-	public static void withFade(Group group , long duration,double brightness){
-		FadeTransition ft =new FadeTransition(Duration.millis(duration),group);
+	public static void withFade(Group group ,double brightness){
+		FadeTransition ft =new FadeTransition(Duration.millis(animDuration),group);
 		ft.setFromValue(brightness/8);
 		ft.setToValue(brightness);
 		ft.setCycleCount(4);
@@ -94,7 +94,7 @@ public class TourView_Tonnerre extends TourView {
 	@Override
 	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
 
-		final double displacement = 100;
+		final double displacement = 120;
 		final double curDetail =15;
 		
 		Bounds boundsInScene = localToScene(getBoundsInLocal());
@@ -110,7 +110,7 @@ public class TourView_Tonnerre extends TourView {
 			}
 		});
 		for(Group group : jagged){
-			withFade(group ,mTour.getIntervalCheck()/3,Math.random() +0.2);
+			withFade(group ,Math.random() +0.2);
 		}
 		
 	}

@@ -23,8 +23,8 @@ public class TourView_TripleTonnere extends TourView {
 	@Override
 	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
 
-		final double displacement = 70;
-		final double curDetail =10;
+		final double displacement = 300;
+		final double curDetail =80;
 		
 		Bounds boundsInScene = localToScene(getBoundsInLocal());
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
@@ -45,13 +45,13 @@ public class TourView_TripleTonnere extends TourView {
 			}
 		});
 		for(Group group : jagged){
-			TourView_Tonnerre.withFade(group ,mTour.getIntervalCheck()/3,Math.random() +0.2);
+			TourView_Tonnerre.withFade(group,Math.random() +0.2);
 		}
 		for(Group group : jagged2){
-			TourView_Tonnerre.withFade(group ,mTour.getIntervalCheck()/3,Math.random() +0.2);
+			TourView_Tonnerre.withFade(group,Math.random() +0.2);
 		}
 		for(Group group : jagged3){
-			TourView_Tonnerre.withFade(group ,mTour.getIntervalCheck()/3,Math.random() +0.2);
+			TourView_Tonnerre.withFade(group,Math.random() +0.2);
 		}
 		
 	}

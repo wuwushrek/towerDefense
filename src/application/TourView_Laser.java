@@ -25,6 +25,7 @@ public class TourView_Laser extends TourView {
 				Main.infosTour.get("laser")[1],
 				Main.infosTour.get("laser")[2]),
 				Main.infosImage.get("laser"));
+		mTour.setIntervalCheck(Main.infosTour.get("laser")[3]);
 	}
 	
 	@Override
@@ -33,7 +34,7 @@ public class TourView_Laser extends TourView {
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
         double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
 		Group laserW = laser(xInScene , yInScene ,xValueTarget,yValueTarget,Color.DARKBLUE);
-		TourView_Tonnerre.withFade(laserW ,mTour.getIntervalCheck()/3,Math.random() +0.2);
+		TourView_Tonnerre.withFade(laserW,Math.random() +0.2);
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
