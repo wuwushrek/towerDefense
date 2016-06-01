@@ -26,6 +26,7 @@ public class TourView_CanonSimple extends TourView {
 				Main.infosTour.get("canon_simple")[1],
 				Main.infosTour.get("canon_simple")[2]),
 				Main.infosImage.get("canon_simple"));
+		mTour.setIntervalCheck(Main.infosTour.get("canon_simple")[3]);
 		bloom.setThreshold(0.6);
 	}
 	

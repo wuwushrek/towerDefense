@@ -23,6 +23,7 @@ public class TourView_Mortier extends TourView {
 				Main.infosTour.get("mortier")[1],
 				Main.infosTour.get("mortier")[2]),
 				Main.infosImage.get("mortier"));
+		mTour.setIntervalCheck(Main.infosTour.get("mortier")[3]);
 	}
 	
 	@Override
@@ -49,10 +50,10 @@ public class TourView_Mortier extends TourView {
 			}
 		});
 		
-		animate(xInScene , yInScene,xValueTarget , yValueTarget,balle);
+		animate(xInScene , yInScene,xValueTarget , yValueTarget,mTour.getIntervalCheck(),balle);
 	}
 	
-	public void animate(double xFrom , double yFrom,DoubleProperty xTo, DoubleProperty yTo, final Node node){
+	public static void animate(double xFrom , double yFrom,DoubleProperty xTo, DoubleProperty yTo,long duration,final Node node){
 		Path path = new Path();
 		path.getElements().add(new MoveTo(xFrom,yFrom));
 		QuadCurveTo quadCurve = new QuadCurveTo();
@@ -62,7 +63,7 @@ public class TourView_Mortier extends TourView {
 		quadCurve.xProperty().bind(xTo);
 		quadCurve.yProperty().bind(yTo);
 		path.getElements().add(quadCurve);
-		PathTransition pathTransition = new PathTransition(Duration.millis(mTour.getIntervalCheck()),path);
+		PathTransition pathTransition = new PathTransition(Duration.millis(duration),path);
 		pathTransition.setNode(node);
 		pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
 		pathTransition.setAutoReverse(true);

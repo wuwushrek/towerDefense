@@ -108,6 +108,7 @@ public class Main extends Application {
 		
 		infosImage.put("boule_bleu",  new Image(getClass().getResource("boule_bleu.png").toExternalForm()));
 		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
+		infosImage.put("minion", new Image(getClass().getResource("boule_feu.png").toExternalForm()));
 		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, Color.GRAY);
 
 		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
