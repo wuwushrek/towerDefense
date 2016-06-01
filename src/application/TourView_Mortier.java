@@ -58,7 +58,7 @@ public class TourView_Mortier extends TourView {
 		QuadCurveTo quadCurve = new QuadCurveTo();
 		
 		quadCurve.setControlX((xFrom+xTo.get())/2);
-		quadCurve.setControlY(yFrom-50);
+		quadCurve.setControlY(yFrom-100);
 		quadCurve.xProperty().bind(xTo);
 		quadCurve.yProperty().bind(yTo);
 		path.getElements().add(quadCurve);

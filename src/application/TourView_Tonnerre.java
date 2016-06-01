@@ -110,7 +110,7 @@ public class TourView_Tonnerre extends TourView {
 			}
 		});
 		for(Group group : jagged){
-			withFade(group ,mTour.getIntervalCheck()/2,Math.random() +0.2);
+			withFade(group ,mTour.getIntervalCheck()/3,Math.random() +0.2);
 		}
 		
 	}

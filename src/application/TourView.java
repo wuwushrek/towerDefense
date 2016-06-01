@@ -18,7 +18,7 @@ public class TourView extends StackPane implements OnTourShot{
 	
 	public TourView(TourInterface tour, Image tourIm){
 		super();
-		this.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+		//this.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
 		mTour = tour;
 		mImage = new ImageView(tourIm);
 		mImage.setPreserveRatio(true);
