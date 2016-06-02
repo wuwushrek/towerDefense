@@ -45,6 +45,7 @@ public class TourView_CanonSimple extends TourView {
 		balls.setRadius(5);
 		
 		balls.setFill(color);
+		
 		balls.setStroke(color.darker());
 		balls.setStrokeWidth(1);
 		

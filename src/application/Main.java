@@ -18,12 +18,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.util.Duration;
-import modele.GameFactory;
-import modele.PartieInterface;
-import modele.SbireInterface;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -31,10 +25,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,6 +42,12 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
+import modele.GameFactory;
+import modele.PartieInterface;
+import modele.SbireInterface;
 
 public class Main extends Application {
 	
@@ -51,14 +55,14 @@ public class Main extends Application {
 	public static final Map<String,Integer[]> infosTour = new HashMap<String,Integer[]>();
 	public static final Map<String,Image> infosImage = new HashMap<String,Image>();
 
-	private static final int[] startCoord = new int[] { 8, 0 };
-	private static final int[] endCoord = new int[] { 2, 5 };
+	private static final int[] startCoord = new int[] { 0, 0 };
+	private static final int[] endCoord = new int[] { 7,7 };
 
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
 
-	private static final int ROW_COUNT = 15;
-	private static final int COLUMN_COUNT = 12;
+	private static final int ROW_COUNT = 8;
+	private static final int COLUMN_COUNT = 8;
 
 	public static final IntegerProperty TILE_SIZE_X = new SimpleIntegerProperty();
 	public static final IntegerProperty TILE_SIZE_Y = new SimpleIntegerProperty();
@@ -78,6 +82,10 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
+		
+	
+		
+		
 		infosTour.put("tour_archer", new Integer[]{9,10,100,1100});
 		infosImage.put("tour_archer",new Image(getClass().getResource("archer2.png").toExternalForm()));
 		infosTour.put("tour_canonportee", new Integer[]{11,15,200,1000});
@@ -111,7 +119,10 @@ public class Main extends Application {
 		infosImage.put("minion", new Image(getClass().getResource("minion.png").toExternalForm()));
 		infosImage.put("boule_feu", new Image(getClass().getResource("boule_feu.png").toExternalForm()));
 		infosImage.put("flechette", new Image(getClass().getResource("flechette.png").toExternalForm()));
-		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, Color.GRAY);
+		infosImage.put("backgroundTest", new Image(getClass().getResource("background.jpg").toExternalForm()));
+		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, null);
+		
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm()) ;
 
 		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
 		SelectTourMenuItem.setDamageImage(new Image(getClass().getResource("bullet_speed.png").toExternalForm()));
@@ -122,6 +133,12 @@ public class Main extends Application {
 		TILE_SIZE_X.bind(scene.widthProperty().divide(COLUMN_COUNT));
 		TILE_SIZE_Y.bind(scene.heightProperty().divide(ROW_COUNT));
 		
+		//Background
+		
+		ImageView background = new ImageView(infosImage.get("backgroundTest")) ;
+		background.fitHeightProperty().bind(scene.heightProperty());
+		background.fitWidthProperty().bind(scene.widthProperty());
+	
 		//Menu tours
 		mTourMenu = new TourMenu();
 		Scene sceneMenu = new Scene(mTourMenu , TourMenu.WIDTH,TourMenu.HEIGHT);
@@ -193,7 +210,9 @@ public class Main extends Application {
 		menuOption.prefWidthProperty().bind(scene.widthProperty());
 		
 		root.getChildren().addAll(mGrid);
-		mainGroup.setBackground(new Background(new BackgroundFill(Color.GRAY,null,null)));
+		//mainGroup.setBackground(new Background(new BackgroundFill(Color.GRAY,null,null)));
+//		mainGroup.setBackground(new Background(new BackgroundImage(infosImage.get("backgroundTest"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+//		          BackgroundSize.DEFAULT)));
 		mainGroup.setAlignment(chronometerLab,Pos.TOP_CENTER);
 		mainGroup.getChildren().addAll(root,chronometerLab);
 		primaryStage.setScene(scene);
@@ -203,7 +222,7 @@ public class Main extends Application {
 		chronometer.setCycleCount(Animation.INDEFINITE);
 		chronometer.play();
 		
-		parentGroup.getChildren().add(mainGroup);
+		parentGroup.getChildren().addAll(background,mainGroup);
 		
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -360,9 +379,9 @@ public class Main extends Application {
 		parentGroup.getChildren().remove(node);
 	}
 	
-	private final String selectionTime = "00:10";
+	private final String selectionTime = "00:04";
 	private final StringProperty time = new SimpleStringProperty(selectionTime);
-	private int compteur = 10;
+	private int compteur = 4;
 	private final Timeline chronometer = new Timeline(new KeyFrame(Duration.millis(1000),
 			new EventHandler<ActionEvent>(){
 		@Override
@@ -374,7 +393,7 @@ public class Main extends Application {
 			if(compteur==0){
 				partie.initSbiresOnLevel();
 				for (SbireInterface sbire : partie.getSbireList()) {
-					SbireView sb = new SbireView(infosImage.get("minion"), sbire, 20, 20);
+					SbireView sb = new SbireView(infosImage.get("minion"), sbire, 40, 40);
 					sbire.setOnSbireDestroy(sb);
 					root.getChildren().add(sb);
 					mSbires.add(sb);

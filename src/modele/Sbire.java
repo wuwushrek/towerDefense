@@ -55,6 +55,10 @@ class Sbire implements TourTarget , SbireInterface{
 		if(newValue>0){
 			System.out.println(this.toString());
 			this.pointDeVie.set(newValue);
+			if(sbireDestroy != null)
+			{
+				this.sbireDestroy.onSbireTouched();
+			}
 			return true;
 		}
 		this.pointDeVie.set(0);

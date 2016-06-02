@@ -1,6 +1,7 @@
 package application;
 
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
@@ -17,9 +18,13 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.util.Duration;
@@ -29,7 +34,7 @@ import pathfinder.Path.Step;
 
 public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
-	private final static long BASIC_STEP_TIME = 2500;
+	private final static long BASIC_STEP_TIME = 2000;
 	
 	private SbireInterface mSbire;
 	private ProgressBar mProgress;
@@ -58,8 +63,12 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		mImage.setFitHeight(height);
 		
 		mProgress = new ProgressBar();
-		mProgress.setPrefWidth(width);
-		mProgress.setPrefHeight(height);
+		mProgress.setPrefWidth(width*1.1);
+		ColorAdjust adjust = new ColorAdjust() ;
+		adjust.setHue(-0.4);
+		mProgress.setEffect(adjust);
+		
+		
 		mProgress.progressProperty().bind(mSbire.pointDeVieProperty().divide(mSbire.getInitialPointDeVie()));
 		this.setSpacing(5);
 		this.getChildren().add(mProgress);
@@ -116,6 +125,20 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		});
 	}
 	
+	@Override
+	public void onSbireTouched() {
+		// TODO Auto-generated method stub
+		FadeTransition ft =new FadeTransition(Duration.millis(100),this);
+		ft.setFromValue(1);
+		ft.setToValue(0.1);
+		ft.setCycleCount(4);
+		ft.setAutoReverse(true);
+		mProgress.setEffect(new ColorAdjust(255,0,0,1));
+		
+		ft.play();
+		
+	}
+	
 	//A appliquer apres avoir rajouter le groupe dans la scene
 	private void initPathAnimation(Path mPath){
 		javafx.scene.shape.Path path = new javafx.scene.shape.Path();
@@ -161,5 +184,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		// TODO Auto-generated method stub
 		return currentY;
 	}
+
+	
 	
 }
