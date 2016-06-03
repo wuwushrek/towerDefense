@@ -9,6 +9,9 @@ public interface PartieInterface {
 	IntegerProperty sbireTueeProperty();
 	IntegerProperty argentProperty();
 	IntegerProperty pointVieProperty();
+	IntegerProperty scoreProperty();
+	int getNumberOfLevel();
+	int getCurrentSbireNumber();
 	SbireSideInterface getSbireSideInterface();
 	TourSideInterface getTourSideInterface();
 	void timeToSetSbirePath();

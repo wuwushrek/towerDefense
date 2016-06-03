@@ -16,11 +16,13 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -28,16 +30,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -72,20 +68,12 @@ public class Main extends Application {
 	private final PartieInterface partie = GameFactory.createPartie(ROW_COUNT, COLUMN_COUNT, startCoord, endCoord);
 
 	private static final Group parentGroup= new Group();
-	private StackPane mainGroup = new StackPane();
-	private final Group root = new Group();
 	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
 	private final GridPane mGrid = new GridPane();
-	private final HBox menuOption = new HBox(10);
-	private final Label chronometerLab = new Label();
 	private TourMenu mTourMenu;
 	
 	@Override
 	public void start(Stage primaryStage) {
-		
-	
-		
-		
 		infosTour.put("tour_archer", new Integer[]{9,10,100,1100});
 		infosImage.put("tour_archer",new Image(getClass().getResource("archer2.png").toExternalForm()));
 		infosTour.put("tour_canonportee", new Integer[]{11,15,200,1000});
@@ -122,22 +110,21 @@ public class Main extends Application {
 		infosImage.put("backgroundTest", new Image(getClass().getResource("background.jpg").toExternalForm()));
 		Scene scene = new Scene(parentGroup, WIDTH, HEIGHT, null);
 		
-		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm()) ;
-
-		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
-		SelectTourMenuItem.setDamageImage(new Image(getClass().getResource("bullet_speed.png").toExternalForm()));
-		SelectTourMenuItem.setPrixImage(new Image(getClass().getResource("coin-euro.png").toExternalForm()));
-		SelectTourMenuItem.setPorteeImage(new Image(getClass().getResource("portee_im.png").toExternalForm()));
-		SelectTourMenuItem.setSpeedImage(new Image(getClass().getResource("sword.png").toExternalForm()));
-
-		TILE_SIZE_X.bind(scene.widthProperty().divide(COLUMN_COUNT));
-		TILE_SIZE_Y.bind(scene.heightProperty().divide(ROW_COUNT));
-		
 		//Background
-		
 		ImageView background = new ImageView(infosImage.get("backgroundTest")) ;
 		background.fitHeightProperty().bind(scene.heightProperty());
 		background.fitWidthProperty().bind(scene.widthProperty());
+		
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm()) ;
+		
+		SelectTourMenuItem.setBackgroundImage(new Image(getClass().getResource("items_back.png").toExternalForm()));
+		SelectTourMenuItem.setDamageImage(new Image(getClass().getResource("sword.png").toExternalForm()));
+		SelectTourMenuItem.setPrixImage(new Image(getClass().getResource("coin-euro.png").toExternalForm()));
+		SelectTourMenuItem.setPorteeImage(new Image(getClass().getResource("portee_im.png").toExternalForm()));
+		SelectTourMenuItem.setSpeedImage(new Image(getClass().getResource("bullet_speed.png").toExternalForm()));
+
+		TILE_SIZE_X.bind(scene.widthProperty().divide(COLUMN_COUNT));
+		TILE_SIZE_Y.bind(scene.heightProperty().divide(ROW_COUNT));
 	
 		//Menu tours
 		mTourMenu = new TourMenu();
@@ -187,12 +174,8 @@ public class Main extends Application {
 
 					}).start();
 				} else {
-					// partie.mSbires.get(0).moveTo(posY, posX);
-					// System.out.println("COUNT: "+partie.count());
 					final double currentCenterX = ((int) (ev.getSceneX()/TILE_SIZE_X.get()))*TILE_SIZE_X.get() +TILE_SIZE_X.get()/2;
 					final double currentCenterY= ((int) (ev.getSceneY()/TILE_SIZE_Y.get()))*TILE_SIZE_Y.get()+TILE_SIZE_Y.get()/2;
-					//TourMenu tourMenu = new TourMenu(currentCenterX,currentCenterY);
-					//scene.setFill(null);
 					mTourMenu.setCurrentX(currentCenterX);
 					mTourMenu.setCurrentY(currentCenterY);
 					stage1.setX(ev.getScreenX()-TourMenu.WIDTH/2);
@@ -202,30 +185,100 @@ public class Main extends Application {
 			}
 
 		});
-
-		chronometerLab.textProperty().bind(time);
 		
-		menuOption.getChildren().add(chronometerLab);
-		menuOption.setAlignment(Pos.CENTER);
-		menuOption.prefWidthProperty().bind(scene.widthProperty());
+		//Mise en place des differents menus
+		//Top Menu
+		HBox topMenu = new HBox(25);
+		topMenu.prefWidthProperty().bind(scene.widthProperty());
+		topMenu.setPadding(new Insets(5));
+		topMenu.setFillHeight(false);
+		topMenu.setAlignment(Pos.CENTER);
 		
-		root.getChildren().addAll(mGrid);
-		//mainGroup.setBackground(new Background(new BackgroundFill(Color.GRAY,null,null)));
-//		mainGroup.setBackground(new Background(new BackgroundImage(infosImage.get("backgroundTest"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-//		          BackgroundSize.DEFAULT)));
-		mainGroup.setAlignment(chronometerLab,Pos.TOP_CENTER);
-		mainGroup.getChildren().addAll(root,chronometerLab);
+		HBox ressourceBox = new HBox(25);
+		ressourceBox.setId("hboxLabels");
+		Label ressourceLabel = new Label("MONEY");
+		ressourceLabel.setId("labelTopMenu");
+		Label ressourceValue = new Label();
+		ressourceValue.textProperty().bind(partie.argentProperty().asString());
+		ressourceValue.setId("moneyView");
+		ressourceBox.getChildren().addAll(ressourceLabel,ressourceValue);
+		
+		HBox livesBox = new HBox(25);
+		livesBox.setId("hboxLabels");
+		Label livesLabel = new Label("LIVES");
+		livesLabel.setId("labelTopMenu");
+		Label livesValue = new Label();
+		livesValue.textProperty().bind(partie.pointVieProperty().asString());
+		livesValue.setId("livesView");
+		livesBox.getChildren().addAll(livesLabel,livesValue);
+		
+		HBox score = new HBox(30);
+		score.setId("hboxLabels");
+		Label scoreLabel= new Label("SCORE");
+		scoreLabel.setId("labelTopMenu");
+		Label scoreValue = new Label();
+		scoreValue.textProperty().bind(partie.scoreProperty().asString());
+		scoreValue.setId("scoreView");
+		score.getChildren().addAll(scoreLabel,scoreValue);
+		
+		HBox chronometerBox = new HBox(25);
+		chronometerBox.setId("hboxLabels");
+		Label chronometerLabel = new Label("TIME");
+		chronometerLabel.setId("labelTopMenu");
+		Label chronometerValue = new Label();
+		chronometerValue.textProperty().bind(time);
+		chronometerValue.setId("chronoView");
+		chronometerBox.getChildren().addAll(chronometerLabel,chronometerValue);
+		topMenu.getChildren().addAll(ressourceBox,livesBox,score,chronometerBox);
+		
+		//Bottom Menu
+		HBox leftBottomMenu = new HBox(5);
+		leftBottomMenu.prefWidthProperty().bind(scene.widthProperty());
+		leftBottomMenu.layoutYProperty().bind(scene.heightProperty().subtract(leftBottomMenu.heightProperty()));
+		//leftBottomMenu.layoutXProperty().bind(ressourceBox.layoutXProperty());
+		leftBottomMenu.setPadding(new Insets(0,0,5,0));
+		leftBottomMenu.setAlignment(Pos.CENTER);
+		leftBottomMenu.setFillHeight(false);
+		
+		Button playButton = new Button();
+		playButton.setId("play_button");
+		Button pauseButton = new Button();
+		pauseButton.setId("pause_button");
+		pauseButton.setDisable(true);
+		
+		HBox level = new HBox(10);
+		level.setId("hboxLabels");
+		Label levelLabel = new Label("LEVEL");
+		levelLabel.setId("labelTopMenu");
+		Label levelValue = new Label();
+		levelValue.setId("levelView");
+		levelValue.textProperty().bind(partie.levelProperty().asString().concat("/"+partie.getNumberOfLevel()));
+		level.getChildren().addAll(levelLabel,levelValue);
+		
+		HBox wave = new HBox(10);
+		wave.setId("hboxLabels");
+		Label waveLabel = new Label("SBIRE");
+		waveLabel.setId("labelTopMenu");
+		Label waveValue = new Label();
+		waveValue.textProperty().bind(partie.sbireTueeProperty().asString().concat("/"+partie.getCurrentSbireNumber()));
+		waveValue.setId("waveView");
+		wave.getChildren().addAll(waveLabel,waveValue);
+		
+		Button menuView = new Button();
+		menuView.setId("menuButton");
+		
+		Button animRate = new Button("x1");
+		animRate.setId("animRateView");
+		leftBottomMenu.getChildren().addAll(menuView,animRate,level,wave,playButton,pauseButton);
+		/*Fin mise en places Menus*/
+		
+		parentGroup.getChildren().addAll(background,mGrid,topMenu,leftBottomMenu);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
+		
 		chronometer.setAutoReverse(true);
 		chronometer.setCycleCount(Animation.INDEFINITE);
 		chronometer.play();
-		
-		parentGroup.getChildren().addAll(background,mainGroup);
-		
-		primaryStage.setScene(scene);
-		primaryStage.show();
 	}
 
 	public static void main(String[] args) {
@@ -253,8 +306,6 @@ public class Main extends Application {
 			rayon.setOpacity(0.7);
 			rayon.setStrokeWidth(3);
 			rayon.setStroke(Color.CYAN);
-			//rayon.setCenterX(currentX);
-			//rayon.setCenterY(currentY);
 			rayon.setVisible(false);
 			
 			parentGroup.getChildren().add(rayon);
@@ -395,7 +446,7 @@ public class Main extends Application {
 				for (SbireInterface sbire : partie.getSbireList()) {
 					SbireView sb = new SbireView(infosImage.get("minion"), sbire, 40, 40);
 					sbire.setOnSbireDestroy(sb);
-					root.getChildren().add(sb);
+					parentGroup.getChildren().add(sb);
 					mSbires.add(sb);
 				}
 				partie.timeToSetSbirePath();

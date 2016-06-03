@@ -1,5 +1,157 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+@font-face {
+  font-family: Legacy;
+  src: url('legacy.ttf');
+}
+
 .progress-bar .bar {
 	-fx-padding:1px; 
 	-fx-background-insets:0;
+}
+
+#labelTopMenu {
+	-fx-font-size:16pt; 
+	-fx-font-family: Legacy;
+	-fx-text-fill : white;
+	-fx-text-alignment:center;
+	-fx-effect: dropshadow(gaussian,black,5, 0, 4, 4);
+}
+#moneyView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: gold;
+	-fx-text-alignment:center;
+	-fx-graphic : url("bag_money.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#livesView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: #2CF7B3;
+	-fx-text-alignment:center;
+	-fx-graphic : url("lives_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#scoreView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: gold;
+	-fx-text-alignment:center;
+	-fx-graphic : url("score_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#hboxLabels {
+	-fx-padding:0px 2px 0px 4px;
+	-fx-border-width:1px;
+	-fx-border-radius:5px;
+	-fx-border-color:black;
+	-fx-alignment:center;
+	-fx-background-color:rgba(25,25,25,0.7);
+	-fx-background-radius:5px
+}
+#chronoView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: #2CF7B3;
+	-fx-text-alignment:center;
+	-fx-graphic : url("chrono_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#play_button {
+	-fx-pref-height:60px;
+	-fx-pref-width:60px;
+	-fx-background-image:url("play_icon.png");
+	-fx-background-color:transparent; 
+	-fx-background-repeat:no-repeat;
+	-fx-background-size:cover;
+	-fx-opacity:0.8;
+}
+#play_button:hover {
+	-fx-background-color:derive(black,40%);
+}
+#play_button:pressed {
+	-fx-background-color:transparent;
+}
+#play_button:disabled {
+	-fx-opacity:0.4;
+}
+
+#pause_button {
+	-fx-pref-height:60px;
+	-fx-pref-width:60px;
+	-fx-background-image:url("pause_icon.png");
+	-fx-background-color:transparent; 
+	-fx-background-repeat:no-repeat;
+	-fx-background-size:cover;
+	-fx-opacity:0.8;
+}
+#pause_button:hover {
+	-fx-background-color:derive(black,40%);
+}
+#pause_button:pressed {
+	-fx-background-color:transparent;
+}
+#pause_button:disabled {
+	-fx-opacity:0.4;
+}
+
+#levelView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: gold;
+	-fx-text-alignment:right;
+	-fx-graphic : url("star_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#waveView {
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: #2CF7B3;
+	-fx-text-alignment:right;
+	-fx-graphic : url("sbire_tuee_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#menuButton {
+	-fx-pref-height:60px;
+	-fx-pref-width:60px;
+	-fx-background-image:url("home_button.png");
+	-fx-background-color:transparent; 
+	-fx-background-repeat:no-repeat;
+	-fx-background-size:cover;
+	-fx-background-radius:5px;
+	-fx-opacity:0.8;
+}
+#menuButton:hover {
+	-fx-background-color:derive(black,40%);
+}
+#menuButton:pressed {
+	-fx-background-color:transparent;
+}
+
+#animRateView {
+	-fx-pref-height:60px;
+	-fx-pref-width:70px;
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: white;
+	-fx-text-alignment:center;
+	-fx-background-image:url("back_rate.png");
+	-fx-background-color:transparent; 
+	-fx-background-repeat:no-repeat;
+	-fx-background-size:cover;
+	-fx-background-radius:5px;
+	-fx-opacity:0.8;
+}
+#animRateView:hover {
+	-fx-background-color:derive(black,40%);
+}
+#animRateView:pressed {
+	-fx-background-color:transparent;
 }

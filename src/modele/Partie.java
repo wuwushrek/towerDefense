@@ -69,6 +69,14 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		pathFinder = new AStarPathFinder(this,500,false);
 	}
 	
+	public int getNumberOfLevel(){
+		return sbireByLevel.length-1;
+	}
+	
+	public int getCurrentSbireNumber(){
+		return sbireByLevel[level.get()];
+	}
+	
 	@Override
 	public IntegerProperty levelProperty(){
 		return level;
@@ -164,76 +172,6 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	@Override
 	public TourTarget lookAndKill(int rowIndex, int columnIndex,int porteeDist) {
 		return findSbire(rowIndex,columnIndex,porteeDist);
-		// TODO Auto-generated method stub
-		/*int minX = rowIndex - porteeRow;
-		int minY = columnIndex - porteeColumn;
-		int maxX = rowIndex + porteeRow;
-		int maxY = columnIndex + porteeColumn;
-		
-		minX = minX<0? 0:minX;
-		minY = minY<0? 0:minY;
-		maxX = maxX>rowCount? rowCount:maxX;
-		maxY = maxY>columnCount? columnCount:maxY;
-		//System.out.println("MINX: "+minX+ " ,MINY: "+minY+" ,MAX X: "+maxX+"MAX Y: "+maxY);
-		if(rowIndex>arrivee[0]){
-			if(columnIndex>arrivee[1]){
-				for(int i= minX ; i<maxX ; i++){
-					for(int j=minY; j<maxY ; j++){
-						if(!blocked(null,i,j) && map[i][j]!= VIDE){
-							Sbire sbire = findSbire(i,j);
-							if(sbire!=null){
-								System.out.println("Partie TERMINEE: "+isFinishOrOver());
-								//sbire.decrementPointDeVie(damage);
-								return sbire;
-							}
-						}
-					}
-				}
-			}else{
-				for(int i= minX ; i<maxX ; i++){
-					for(int j=maxY-1; j>=minY ; j--){
-						if(!blocked(null,i,j) && map[i][j]!= VIDE){
-							Sbire sbire = findSbire(i,j);
-							if(sbire!=null){
-								System.out.println("Partie TERMINEE: "+isFinishOrOver());
-								//sbire.decrementPointDeVie(damage);
-								return sbire;
-							}
-						}
-					}
-				}
-			}
-		}else{
-			if(columnIndex>arrivee[1]){
-				for(int i= maxX-1 ; i>=minX ; i--){
-					for(int j=minY; j<maxY ; j++){
-						if(!blocked(null,i,j) && map[i][j]!= VIDE){
-							Sbire sbire = findSbire(i,j);
-							if(sbire!=null){
-								System.out.println("Partie TERMINEE: "+isFinishOrOver());
-								//sbire.decrementPointDeVie(damage);
-								return sbire;
-							}
-						}
-					}
-				}
-			}else{
-				for(int i= maxX-1 ; i>=minX ; i--){
-					for(int j=maxY-1; j>+minY ; j--){
-						if(!blocked(null,i,j) && map[i][j]!= VIDE){
-							Sbire sbire = findSbire(i,j);
-							if(sbire!=null){
-								System.out.println("Partie TERMINEE: "+isFinishOrOver());
-								//sbire.decrementPointDeVie(damage);
-								return sbire;
-							}
-						}
-					}
-				}
-			}
-			
-		}
-		return null;*/
 	}
 
 	@Override
