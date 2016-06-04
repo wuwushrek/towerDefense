@@ -6,20 +6,15 @@ import javafx.scene.image.ImageView;
 //import javafx.scene.layout.Background;
 //import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import modele.TourInterface;
 
 public class TourView extends StackPane implements OnTourShot{
 	protected TourInterface mTour;
 	private ImageView mImage;
 	protected static final long animDuration = 250;
-
-	private Circle boule= new Circle();
 	
 	public TourView(TourInterface tour, Image tourIm){
 		super();
-		//this.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
 		mTour = tour;
 		mImage = new ImageView(tourIm);
 		mImage.setPreserveRatio(true);
@@ -28,16 +23,10 @@ public class TourView extends StackPane implements OnTourShot{
 		
 		mImage.fitWidthProperty().bind(Main.TILE_SIZE_X.multiply(1));
 		mImage.fitHeightProperty().bind(Main.TILE_SIZE_Y.multiply(1));
-
-		boule = new Circle();
-		boule.setRadius(Main.TILE_SIZE_X.get()/18);
-		boule.setFill(Color.BLACK);
-		boule.setVisible(false);
 		
-		getChildren().addAll(mImage,boule);
 		mTour.setOnTourShot(this);
-		tour.launch();
-		
+		mTour.launch();
+		getChildren().addAll(mImage);
 	}
 	
 	public int getRow(){
@@ -46,6 +35,10 @@ public class TourView extends StackPane implements OnTourShot{
 	
 	public int getColumn(){
 		return mTour.getColumnIndex();
+	}
+	
+	public double getPortee(){
+		return Math.sqrt(mTour.getPorteeDist());
 	}
 	
 	@Override

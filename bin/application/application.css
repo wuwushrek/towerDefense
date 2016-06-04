@@ -155,3 +155,18 @@
 #animRateView:pressed {
 	-fx-background-color:transparent;
 }
+#delete_button {
+	-fx-font-size: 10pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: red;
+	-fx-text-alignment:right;
+	-fx-graphic : url("delete_icon.png");
+	-fx-content-display:left;
+	-fx-graphic-text-gap: 5px;
+}
+#delete_button_back{
+	-fx-font-size: 20pt;
+	-fx-font-family: Legacy;
+	-fx-text-fill: gold;
+	-fx-text-alignment:center;
+}

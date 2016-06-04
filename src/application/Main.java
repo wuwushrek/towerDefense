@@ -9,10 +9,13 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -35,6 +38,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -71,6 +75,9 @@ public class Main extends Application {
 	private final Stage stage1 = new Stage(StageStyle.TRANSPARENT);
 	private final GridPane mGrid = new GridPane();
 	private TourMenu mTourMenu;
+	private Circle rayon;
+	private VBox deleteTour;
+	private TourListener mTourListener = new TourListener();
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -156,31 +163,19 @@ public class Main extends Application {
 					stage1.close();
 					return;
 				}
-				if (ev.getButton() == MouseButton.SECONDARY) {
-					new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							for (SbireView sbire : mSbires) {
-								sbire.initPathAnimation();
-								sbire.play();
-								try {
-									Thread.sleep(1200);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-
-					}).start();
-				} else {
-					final double currentCenterX = ((int) (ev.getSceneX()/TILE_SIZE_X.get()))*TILE_SIZE_X.get() +TILE_SIZE_X.get()/2;
-					final double currentCenterY= ((int) (ev.getSceneY()/TILE_SIZE_Y.get()))*TILE_SIZE_Y.get()+TILE_SIZE_Y.get()/2;
-					mTourMenu.setCurrentX(currentCenterX);
-					mTourMenu.setCurrentY(currentCenterY);
-					stage1.setX(ev.getScreenX()-TourMenu.WIDTH/2);
-					stage1.setY(ev.getScreenY()-TourMenu.HEIGHT);
-					stage1.show();
+				if (ev.getButton() == MouseButton.PRIMARY && !mTourMenu.isDisable()) {
+					int xIndex = (int) (ev.getSceneX()/TILE_SIZE_X.get());
+					int yIndex =(int) (ev.getSceneY()/TILE_SIZE_Y.get());
+					if(partie.isPathPossible(yIndex, xIndex)){
+						final double currentCenterX = xIndex*TILE_SIZE_X.get() +TILE_SIZE_X.get()/2;
+						final double currentCenterY= yIndex*TILE_SIZE_Y.get()+TILE_SIZE_Y.get()/2;
+						mTourMenu.checkEnable(partie.argentProperty().get());
+						mTourMenu.setCurrentX(currentCenterX);
+						mTourMenu.setCurrentY(currentCenterY);
+						stage1.setX(ev.getScreenX()-TourMenu.WIDTH/2);
+						stage1.setY(ev.getScreenY()-TourMenu.HEIGHT);
+						stage1.show();
+					}
 				}
 			}
 
@@ -198,8 +193,18 @@ public class Main extends Application {
 		ressourceBox.setId("hboxLabels");
 		Label ressourceLabel = new Label("MONEY");
 		ressourceLabel.setId("labelTopMenu");
-		Label ressourceValue = new Label();
-		ressourceValue.textProperty().bind(partie.argentProperty().asString());
+		Label ressourceValue = new Label(""+partie.argentProperty().get());
+		partie.argentProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable(){
+					@Override
+					public void run() {
+						ressourceValue.setText(""+newValue);
+					}
+				});
+			}
+		});
 		ressourceValue.setId("moneyView");
 		ressourceBox.getChildren().addAll(ressourceLabel,ressourceValue);
 		
@@ -207,8 +212,18 @@ public class Main extends Application {
 		livesBox.setId("hboxLabels");
 		Label livesLabel = new Label("LIVES");
 		livesLabel.setId("labelTopMenu");
-		Label livesValue = new Label();
-		livesValue.textProperty().bind(partie.pointVieProperty().asString());
+		Label livesValue = new Label(""+partie.pointVieProperty().get());
+		partie.pointVieProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable(){
+					@Override
+					public void run() {
+						livesValue.setText(""+newValue);
+					}
+				});
+			}
+		});
 		livesValue.setId("livesView");
 		livesBox.getChildren().addAll(livesLabel,livesValue);
 		
@@ -216,8 +231,18 @@ public class Main extends Application {
 		score.setId("hboxLabels");
 		Label scoreLabel= new Label("SCORE");
 		scoreLabel.setId("labelTopMenu");
-		Label scoreValue = new Label();
-		scoreValue.textProperty().bind(partie.scoreProperty().asString());
+		Label scoreValue = new Label(""+partie.scoreProperty().get());
+		partie.scoreProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable(){
+					@Override
+					public void run() {
+						scoreValue.setText(""+newValue);
+					}
+				});
+			}
+		});
 		scoreValue.setId("scoreView");
 		score.getChildren().addAll(scoreLabel,scoreValue);
 		
@@ -250,17 +275,37 @@ public class Main extends Application {
 		level.setId("hboxLabels");
 		Label levelLabel = new Label("LEVEL");
 		levelLabel.setId("labelTopMenu");
-		Label levelValue = new Label();
+		Label levelValue = new Label(""+partie.levelProperty().get()+"/"+partie.getNumberOfLevel());
+		partie.levelProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable(){
+					@Override
+					public void run() {
+						levelValue.setText(""+newValue+"/"+partie.getNumberOfLevel());
+					}
+				});
+			}
+		});
 		levelValue.setId("levelView");
-		levelValue.textProperty().bind(partie.levelProperty().asString().concat("/"+partie.getNumberOfLevel()));
 		level.getChildren().addAll(levelLabel,levelValue);
 		
 		HBox wave = new HBox(10);
 		wave.setId("hboxLabels");
 		Label waveLabel = new Label("SBIRE");
 		waveLabel.setId("labelTopMenu");
-		Label waveValue = new Label();
-		waveValue.textProperty().bind(partie.sbireTueeProperty().asString().concat("/"+partie.getCurrentSbireNumber()));
+		Label waveValue = new Label(""+partie.sbireTueeProperty().get()+"/"+partie.getCurrentSbireNumber());
+		partie.sbireTueeProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				Platform.runLater(new Runnable(){
+					@Override
+					public void run() {
+						waveValue.setText(""+newValue+"/"+partie.getCurrentSbireNumber());
+					}
+				});
+			}
+		});
 		waveValue.setId("waveView");
 		wave.getChildren().addAll(waveLabel,waveValue);
 		
@@ -269,10 +314,30 @@ public class Main extends Application {
 		
 		Button animRate = new Button("x1");
 		animRate.setId("animRateView");
+		
 		leftBottomMenu.getChildren().addAll(menuView,animRate,level,wave,playButton,pauseButton);
 		/*Fin mise en places Menus*/
 		
-		parentGroup.getChildren().addAll(background,mGrid,topMenu,leftBottomMenu);
+		rayon = new Circle();
+		rayon.setFill(Color.LIGHTGRAY);
+		rayon.setOpacity(0.7);
+		rayon.setStrokeWidth(3);
+		rayon.setStroke(Color.CYAN);
+		rayon.setVisible(false);
+		
+		deleteTour = new VBox();
+		Label deleteButton = new Label("DELETE");
+		deleteButton.setId("delete_button");
+		Label rapporte = new Label();
+		rapporte.prefWidthProperty().bind(TILE_SIZE_X);
+		rapporte.prefHeightProperty().bind(TILE_SIZE_Y.subtract(deleteButton.heightProperty()));
+		rapporte.setId("delete_button_back");
+		rapporte.setText("+ 350");
+		deleteTour.setAlignment(Pos.CENTER);
+		deleteTour.setId("hboxLabels");
+		deleteTour.getChildren().addAll(rapporte,deleteButton);
+		
+		parentGroup.getChildren().addAll(background,mGrid,topMenu,leftBottomMenu,rayon);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
@@ -295,23 +360,13 @@ public class Main extends Application {
 		private ScrollPane mScroll;
 		private TilePane tourMenu;
 		private Polygon contour;
-		private Circle rayon;
 		
 		private double currentX=0;
 		private double currentY=0;
 
 		public TourMenu() {
-			rayon = new Circle();
-			rayon.setFill(Color.LIGHTGRAY);
-			rayon.setOpacity(0.7);
-			rayon.setStrokeWidth(3);
-			rayon.setStroke(Color.CYAN);
-			rayon.setVisible(false);
-			
-			parentGroup.getChildren().add(rayon);
-			
 			tourMenu = new TilePane();
-			tourMenu.setPrefRows(3);
+			//tourMenu.setPrefRows(3);
 			tourMenu.setPrefColumns(4);
 
 			for (String name : infosTour.keySet()) {
@@ -337,8 +392,6 @@ public class Main extends Application {
 				menuItem.setOnMouseClicked(new EventHandler<MouseEvent>(){
 					@Override
 					public void handle(MouseEvent e){
-						
-
 						//Tour tour = new Tour(partie,(int) (currentY/TILE_SIZE_Y.get()), (int) (currentX/TILE_SIZE_X.get()), 12, 30, 200);
 						TourView mView = createTour(name,(int) (currentY/TILE_SIZE_Y.get()),(int) (currentX/TILE_SIZE_X.get()));
 						mTours.add(mView);
@@ -346,10 +399,9 @@ public class Main extends Application {
 						mGrid.add(mView, mView.getColumn(), mView.getRow());
 						GridPane.setHalignment(mView, HPos.CENTER);
 						GridPane.setValignment(mView, VPos.CENTER);
-						partie.timeToSetSbirePath();
-						
 						rayon.setVisible(false);
 						stage1.close();
+						mView.addEventHandler(MouseEvent.ANY,mTourListener);
 					}
 				});
 				tourMenu.getChildren().add(menuItem);
@@ -373,6 +425,17 @@ public class Main extends Application {
 			contour.setStroke(Color.LIGHTCYAN);
 			contour.setFill(Color.LIGHTGRAY);
 			this.getChildren().addAll(contour,mScroll);
+		}
+		
+		public void checkEnable(int moneyLeft){
+			for(Node node :tourMenu.getChildren()){
+				SelectTourMenuItem tourItem = (SelectTourMenuItem) node;
+				if(tourItem.getPrix()>moneyLeft){
+					tourItem.setDisable(true);
+				}else{
+					tourItem.setDisable(false);
+				}
+			}
 		}
 		
 		public void setCurrentX(double currentX){
@@ -430,9 +493,10 @@ public class Main extends Application {
 		parentGroup.getChildren().remove(node);
 	}
 	
-	private final String selectionTime = "00:04";
+	private final String selectionTime = "00:10";
 	private final StringProperty time = new SimpleStringProperty(selectionTime);
-	private int compteur = 4;
+	private final int selectionTimeInt = 10;
+	private int compteur = selectionTimeInt;
 	private final Timeline chronometer = new Timeline(new KeyFrame(Duration.millis(1000),
 			new EventHandler<ActionEvent>(){
 		@Override
@@ -440,22 +504,58 @@ public class Main extends Application {
 			compteur--;
 			int min = compteur/60;
 			int sec = compteur % 60;
-			time.set("0"+min+":"+sec);
+			time.set("0"+min+":"+(sec<10?"0"+sec:sec));
 			if(compteur==0){
 				partie.initSbiresOnLevel();
+				partie.timeToSetSbirePath();
 				for (SbireInterface sbire : partie.getSbireList()) {
 					SbireView sb = new SbireView(infosImage.get("minion"), sbire, 40, 40);
 					sbire.setOnSbireDestroy(sb);
 					parentGroup.getChildren().add(sb);
 					mSbires.add(sb);
 				}
-				partie.timeToSetSbirePath();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						for (SbireView sbire : mSbires) {
+							try {
+								Thread.sleep(1200);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							sbire.play();
+						}
+					}
+
+				}).start();
 				stage1.close();
 				mTourMenu.setDisable(true);
-				compteur =2*60;
+				compteur =selectionTimeInt;
 				time.set(selectionTime);
 				chronometer.stop();
 			}
 		}
 	}));
+	
+	class TourListener implements EventHandler<MouseEvent>{
+		@Override
+		public void handle(MouseEvent event) {
+			TourView tourSource = (TourView) event.getSource();
+			if(event.getEventType()== MouseEvent.MOUSE_ENTERED){
+				int xPosition =((int) event.getSceneX()/TILE_SIZE_X.get())+TILE_SIZE_X.get()/2;
+				int yPosition =((int) event.getSceneY()/TILE_SIZE_Y.get())+TILE_SIZE_Y.get()/2;
+				rayon.setCenterX(xPosition);
+				rayon.setCenterY(yPosition);
+				rayon.setRadius(tourSource.getPortee()*Math.min(TILE_SIZE_X.get(),TILE_SIZE_Y.get()));
+				rayon.setVisible(true);
+				tourSource.getChildren().add(deleteTour);
+			}else if (event.getEventType()==MouseEvent.MOUSE_EXITED){
+				rayon.setVisible(false);
+				tourSource.getChildren().remove(deleteTour);
+			}else if(event.getEventType()==MouseEvent.MOUSE_CLICKED){
+				
+			}
+		}
+		
+	}
 }

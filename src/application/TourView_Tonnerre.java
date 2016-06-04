@@ -24,6 +24,7 @@ public class TourView_Tonnerre extends TourView {
 				Main.infosTour.get("tonnerre")[1],
 				Main.infosTour.get("tonnerre")[2]),
 				Main.infosImage.get("tonnerre"));
+		mTour.setIntervalCheck(Main.infosTour.get("tonnerre")[3]);
 	}
 	
 	public static List<Vec> midPointReplacement(Vec source , Vec dest ,double displace,double curDetail){
@@ -45,7 +46,6 @@ public class TourView_Tonnerre extends TourView {
 		List<Group> ret = new ArrayList<Group>();
 		Vec last = null;
 		for (Vec vec : positions){
-			System.out.println("X: "+vec.x+", Y: "+vec.y);
 			if(last == null){
 				last = vec;
 			}else{

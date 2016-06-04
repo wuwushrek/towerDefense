@@ -21,10 +21,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.util.Duration;
@@ -164,11 +161,12 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		mMovement.setPath(pathLocal);
 	}
 	
-	public void initPathAnimation(){
+	/*public void initPathAnimation(){
 		initPathAnimation(mSbire.getPath());
-	}
+	}*/
 	public void play(){
 		//mMoves.play();
+		initPathAnimation(mSbire.getPath());
 		mMovement.play();
 		applyMove.play();
 	}

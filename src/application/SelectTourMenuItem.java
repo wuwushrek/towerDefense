@@ -39,10 +39,12 @@ public class SelectTourMenuItem extends StackPane{
 	private Rectangle botRec;
 	private Rectangle bgRec;
 	private final Color textFill = Color.WHITE;
+	private int prixValue;
 	public  static final int  DIM =115; 
 	public SelectTourMenuItem(Image tourImage, String name ,int damages , int prix , int portee ,long speed){
 		this.setPrefWidth(DIM);
 		this.setPrefHeight(DIM);
+		prixValue = prix;
 		
 		this.tourImage = new ImageView(tourImage);
 		this.tourImage.setPreserveRatio(true);
@@ -155,6 +157,10 @@ public class SelectTourMenuItem extends StackPane{
 		label.setGraphic(image);
 		label.setTextFill(textColor);
 		label.setContentDisplay(cd);
+	}
+	
+	public int getPrix(){
+		return prixValue;
 	}
 	
 	public double getPortee(){

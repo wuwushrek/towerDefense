@@ -29,6 +29,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	
 	PathFinder pathFinder;
 	int[][] map;
+	int[][] walls = null;
 	
 	private int rowCount;
 	private int columnCount;
@@ -65,7 +66,6 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		mTours = new ArrayList<Tour>();
 		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		resetMap();
-		//initSbires();
 		pathFinder = new AStarPathFinder(this,500,false);
 	}
 	
@@ -142,6 +142,20 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	
 	public synchronized void incrementScore(int value){
 		score.set(score.get()+value);
+	}
+	
+	public boolean isPathPossible(int rowIndex , int columnIndex){
+		if((rowIndex == depart[0] && columnIndex == depart[1])|| 
+				(rowIndex ==arrivee[0] && columnIndex == arrivee[1])||
+				blocked(new Mover(),rowIndex,columnIndex)){
+			return false;
+		}
+		int lastValue = map[rowIndex][columnIndex];
+		map[rowIndex][columnIndex] = TOUR;
+		Path path = pathFinder.findPath(new Mover(), depart[0], depart[1], arrivee[0], arrivee[1]);
+		map[rowIndex][columnIndex] = lastValue;
+		return path != null;
+		
 	}
 	
 	//A retoucher
@@ -241,9 +255,18 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 				map[i][j]=VIDE;
 			}
 		}
+		for(Tour tours : mTours){
+			map[tours.getRowIndex()][tours.getColumnIndex()]=TOUR;
+		}
+		if(walls !=null){
+			for(int i=0; i<walls.length;i++){
+				map[walls[i][0]][walls[i][0]]= WALL;
+			}
+		}
 	}
 	
 	public void setWalls(int[][] walls){
+		this.walls=walls;
 		for(int i=0; i<walls.length;i++){
 			map[walls[i][0]][walls[i][0]]= WALL;
 		}
@@ -251,6 +274,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	
 	@Override
 	public void initSbiresOnLevel(){
+		//resetMap();
 		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		for(int i = 0 ; i<sbireByLevel[level.get()]; i++){
 			Sbire sbire = new Sbire(this,100,depart[0],depart[1],25,100, 5 ,1.0);
@@ -276,6 +300,8 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		SbireInterface res=null;
 		int minDistArrive = Integer.MAX_VALUE;
 		for(SbireInterface sbire: mSbires){
+			if(sbire.getRowIndex()==depart[0] && sbire.getColumnIndex()==depart[1])
+				continue;
 			int dist = (sbire.getRowIndex()-rowIndex)*(sbire.getRowIndex()-rowIndex)+
 					(sbire.getColumnIndex()-columnIndex)*(sbire.getColumnIndex()-columnIndex);
 			int dist2 = (sbire.getRowIndex()-arrivee[0])*(sbire.getRowIndex()-arrivee[0])+
@@ -287,13 +313,6 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		}
 		return (Sbire) res;
 	}
-	/*private Sbire findSbire(int rowIndex , int columnIndex){
-		for(Sbire sbire: mSbires){
-			if (sbire.getRowIndex()== rowIndex && sbire.getColumnIndex()== columnIndex)
-				return sbire;
-		}
-		return null;
-	}*/
 	
 	private synchronized void getAndApplyMoveForSbire(int fromX , int fromY , int toX , int toY , 
 			boolean testDestination){
@@ -313,30 +332,12 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		}
 	}
 	
-	public int count(){
-		int res=0;
-		for(int i=0;i<map.length;i++){
-			for(int j=0;j<map[0].length;j++){
-				if(map[i][j]>0){
-					res+=map[i][j];
-				}
-			}
-		}
-		return res;
-	}
-	
 	@Override
 	public List<SbireInterface> getSbireList(){
 		return mSbires;
 	}
 	
-	public void addSbire(int rowIndex , int columnIndex){
-		Sbire sbire = new Sbire(this,100,rowIndex,columnIndex,50,300, 5,1.0);
-		getAndApplyMoveForSbire(0,0,rowIndex,columnIndex,true);
-		mSbires.add(sbire);
-	}
-	
-	
+	@Override
 	public void timeToSetSbirePath(){
 		Path path = pathFinder.findPath(new Mover(), depart[0], depart[1], arrivee[0], arrivee[1]);
 		Sbire.setPath(path);

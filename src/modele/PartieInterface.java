@@ -17,4 +17,5 @@ public interface PartieInterface {
 	void timeToSetSbirePath();
 	void initSbiresOnLevel();
 	List<SbireInterface> getSbireList();
+	boolean isPathPossible(int rowIndex , int columnIndex);
 }
