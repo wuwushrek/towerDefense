@@ -133,19 +133,7 @@ class Tour implements TourInterface,Runnable {
 	@Override
 	public void run() {
 		while (!mPartie.isFinishOrOver() && isLooking) {
-			if (target == null) {
-				lookForEnnemyAndKill();
-			} else {
-				if (inRange()) {
-					if(whenShoting!= null){
-						whenShoting.whenShoting(target.xProperty(), target.yProperty());
-					}else{
-						target.decrementPointDeVie(damages);
-					}
-				}else{
-					target=null;
-				}
-			}
+			lookForEnnemyAndKill();
 			try {
 				Thread.sleep(interval_check/accelerateFactor);
 			} catch (InterruptedException e) {
@@ -153,15 +141,6 @@ class Tour implements TourInterface,Runnable {
 			}
 		}
 		System.out.println("TOUR STOPPEE: "+ Thread.currentThread().getName());
-	}
-
-	private boolean inRange() {
-		if(target.getColumnIndex()==Partie.arrivee[1] && target.getRowIndex()== Partie.arrivee[0]){
-			return false;
-		}
-		int dist = (target.getRowIndex() - rowIndex) * (target.getRowIndex() - rowIndex)
-				+ (target.getColumnIndex() - columnIndex) * (target.getColumnIndex() - columnIndex);
-		return dist < porteeDist;
 	}
 
 	@Override

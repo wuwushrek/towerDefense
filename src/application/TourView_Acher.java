@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,16 +16,16 @@ public class TourView_Acher extends TourView {
 
 	public TourView_Acher(int rowIndex , int columnIndex , TourSideInterface partie){
 		super (GameFactory.createTour(partie, rowIndex, columnIndex,
-				Main.infosTour.get("tour_archer")[0],
-				Main.infosTour.get("tour_archer")[1],
-				Main.infosTour.get("tour_archer")[2]),
-				Main.infosImage.get("tour_archer"));
-		mTour.setIntervalCheck(Main.infosTour.get("tour_archer")[3]);
+				ALauncher.infosTour.get("tour_archer")[0],
+				ALauncher.infosTour.get("tour_archer")[1],
+				ALauncher.infosTour.get("tour_archer")[2]),
+				ALauncher.infosImage.get("tour_archer"));
+		mTour.setIntervalCheck(ALauncher.infosTour.get("tour_archer")[3]);
 	}
 	
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget){
-		ImageView balle = new ImageView(Main.infosImage.get("flechette"));
+	public void whenShoting(double xValueTarget, double yValueTarget){
+		ImageView balle = new ImageView(ALauncher.infosImage.get("flechette"));
 		//balle.setRotate(90);
 		balle.setPreserveRatio(true);
 		balle.setSmooth(true);
@@ -44,9 +43,9 @@ public class TourView_Acher extends TourView {
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				Main.addNode(balle);
+				ALauncher.addNode(balle);
+				TourView_CanonSimple.animate(xInScene , yInScene,xValueTarget , yValueTarget,balle,TourView_Acher.this);
 			}
 		});
-		TourView_CanonSimple.animate(xInScene , yInScene,xValueTarget , yValueTarget,balle,this);
 	}
 }

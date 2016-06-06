@@ -5,7 +5,6 @@ import java.util.List;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -20,11 +19,11 @@ import modele.TourSideInterface;
 public class TourView_Tonnerre extends TourView {
 	public TourView_Tonnerre(int rowIndex , int columnIndex , TourSideInterface partie){
 		super (GameFactory.createTour(partie, rowIndex, columnIndex,
-				Main.infosTour.get("tonnerre")[0],
-				Main.infosTour.get("tonnerre")[1],
-				Main.infosTour.get("tonnerre")[2]),
-				Main.infosImage.get("tonnerre"));
-		mTour.setIntervalCheck(Main.infosTour.get("tonnerre")[3]);
+				ALauncher.infosTour.get("tonnerre")[0],
+				ALauncher.infosTour.get("tonnerre")[1],
+				ALauncher.infosTour.get("tonnerre")[2]),
+				ALauncher.infosImage.get("tonnerre"));
+		mTour.setIntervalCheck(ALauncher.infosTour.get("tonnerre")[3]);
 	}
 	
 	public static List<Vec> midPointReplacement(Vec source , Vec dest ,double displace,double curDetail){
@@ -56,11 +55,10 @@ public class TourView_Tonnerre extends TourView {
 		return ret;
 	}
 	
-	public static void withFade(Group group ,double brightness,TourView tour){
+	public static void withFade(Group group ,double brightness,TourView tour , boolean damage){
 		FadeTransition ft =new FadeTransition(Duration.millis(200),group);
 		ft.setFromValue(brightness/8);
 		ft.setToValue(brightness);
-		ft.setCycleCount(4);
 		ft.setAutoReverse(true);
 		ft.setRate(animRate);
 		ft.setOnFinished(new EventHandler<ActionEvent>(){
@@ -69,8 +67,10 @@ public class TourView_Tonnerre extends TourView {
 				Platform.runLater(new Runnable(){
 					@Override
 					public void run() {
-						tour.onShotingEnd();
-						Main.removeNode(group);
+						if(damage){
+							tour.onShotingEnd();
+						}
+						ALauncher.removeNode(group);
 					}
 				});
 			}
@@ -94,7 +94,7 @@ public class TourView_Tonnerre extends TourView {
 	}
 	
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
+	public void whenShoting(double xValueTarget, double yValueTarget) {
 
 		final double displacement = 120;
 		final double curDetail =15;
@@ -103,17 +103,24 @@ public class TourView_Tonnerre extends TourView {
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
         double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
 		Vec startVec = new Vec(xInScene,yInScene);
-		Vec destVec = new Vec(xValueTarget.get(),yValueTarget.get());
+		Vec destVec = new Vec(xValueTarget,yValueTarget);
 		List<Group> jagged = jaggedLines(startVec,destVec,Color.WHITESMOKE,displacement,curDetail);
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				Main.addAll(jagged);
+				ALauncher.addAll(jagged);
+				boolean first = true;
+				for(Group group : jagged){
+					if(first){
+						withFade(group ,Math.random() +0.2,TourView_Tonnerre.this,true);
+						first=false;
+					}else{
+						withFade(group ,Math.random() +0.2,TourView_Tonnerre.this,false);
+					}
+				}
 			}
 		});
-		for(Group group : jagged){
-			withFade(group ,Math.random() +0.2,this);
-		}
+		
 		
 	}
 }

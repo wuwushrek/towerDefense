@@ -1,14 +1,13 @@
 package application;
 
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.animation.Transition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -16,7 +15,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -31,7 +30,14 @@ import pathfinder.Path.Step;
 
 public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
-	private final static long BASIC_STEP_TIME = 2000;
+	 private static final int COLUMNS  =   6;
+	 private static final int COUNT    =  36;
+	 private static final int OFFSET_X =  0;
+	 private static final int OFFSET_Y =  0;
+	 private static final int WIDTH    = 100;
+	 private static final int HEIGHT   = 100;
+	
+	private final static long BASIC_STEP_TIME = 2500;
 	private int speedRate =1;
 	
 	private SbireInterface mSbire;
@@ -42,16 +48,19 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	private Timeline applyMove = new Timeline();
 	private ParallelTransition pt;
 
-	private DoubleProperty currentX = new SimpleDoubleProperty();
-	private DoubleProperty currentY = new SimpleDoubleProperty();
+	private double currentX ;
+	private double currentY;
 	private ChangeListener<Number> listener;
+	private FadeTransition ft = new FadeTransition();
+	private ImageView explosionAnim = new ImageView(ALauncher.infosImage.get("explosion"));
+	private final SpriteAnimation explode;
 	
 	public SbireView(Image im, SbireInterface sbire , int width , int height){
 		super();
 		this.mSbire=sbire;
 
-		this.setLayoutX(mSbire.getColumnIndex()*Main.TILE_SIZE_X.get());
-		this.setLayoutY(mSbire.getRowIndex()*Main.TILE_SIZE_Y.get());
+		this.setLayoutX(mSbire.getColumnIndex()*ALauncher.getTileSizeX().get());
+		this.setLayoutY(mSbire.getRowIndex()*ALauncher.getTileSizeY().get());
 		this.setAlignment(Pos.CENTER);
 		
 		mImage = new ImageView(im);
@@ -80,8 +89,8 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 				Bounds boundsInScene = localToScene(getBoundsInLocal());
 		        double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
 		        double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
-		        currentX.set(xInScene);
-		        currentY.set(yInScene);
+		        currentX = xInScene;
+		        currentY= yInScene;
 			}
 			
 		};
@@ -103,17 +112,43 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 						mSbire.moveNext();
 					}	
 		}));
+		ft = new FadeTransition(Duration.millis(50),this);
+		ft.setFromValue(1);
+		ft.setToValue(0.1);
+		ft.setAutoReverse(true);
+		ft.setCycleCount(4);
+		explosionAnim.setViewport(new Rectangle2D(OFFSET_X, OFFSET_Y, WIDTH, HEIGHT));
+		explode = new SpriteAnimation(
+                explosionAnim,
+                Duration.millis(300),
+                COUNT, COLUMNS,
+                OFFSET_X, OFFSET_Y,
+                WIDTH, HEIGHT);
+		explode.setOnFinished(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				ALauncher.removeNode(explosionAnim);
+				ALauncher.removeNode(SbireView.this);
+			}
+			
+		});
 	}
 
 	@Override
-	public void onSbireDestroy() {
+	public void onSbireDestroy(boolean isDead) {
 		// TODO Auto-generated method stub
-		//mMovement.stop();
-		//applyMove.stop();
-		pt.stop();
-		this.translateXProperty().removeListener(listener);
-		this.translateYProperty().removeListener(listener);
-		Platform.runLater(new Runnable(){
+		stop();
+		if(isDead){
+			this.setVisible(false);
+			explosionAnim.setX(currentX-WIDTH/2);
+			explosionAnim.setY(currentY-HEIGHT/2);
+			ALauncher.addNode(explosionAnim);
+			explode.play();
+		}else{
+			ALauncher.removeNode(this);
+		}
+		//ALauncher.removeNode(this);
+		/*Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
@@ -122,20 +157,13 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 					parent.getChildren().remove(SbireView.this);
 				}
 			}
-		});
+		});*/
 	}
 	
 	@Override
 	public void onSbireTouched() {
-		// TODO Auto-generated method stub
-		FadeTransition ft =new FadeTransition(Duration.millis(100),this);
-		ft.setFromValue(1);
-		ft.setToValue(0.1);
-		ft.setCycleCount(4);
-		ft.setAutoReverse(true);
+		ft.playFromStart();
 		mProgress.setEffect(new ColorAdjust(255,0,0,1));
-		ft.play();
-		
 	}
 	
 	//A appliquer apres avoir rajouter le groupe dans la scene
@@ -146,8 +174,8 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		for(int i=1;i< mPath.getLength();i++){
 			Step current = mPath.getStep(i);
 			LineTo dest = new LineTo();
-			dest.xProperty().bind(Main.TILE_SIZE_X.multiply(current.getY()));
-			dest.yProperty().bind(Main.TILE_SIZE_Y.multiply(current.getX()));
+			dest.xProperty().bind(ALauncher.getTileSizeX().multiply(current.getY()));
+			dest.yProperty().bind(ALauncher.getTileSizeY().multiply(current.getX()));
 			path.getElements().add(dest);
 		}
 		javafx.scene.shape.Path pathLocal = new javafx.scene.shape.Path();
@@ -165,62 +193,87 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		mMovement.setPath(pathLocal);
 	}
 	
-	/*public void initPathAnimation(){
-		initPathAnimation(mSbire.getPath());
-	}*/
 	public void firstPlay(){
 		initPathAnimation(mSbire.getPath());
 		pt= new ParallelTransition(this,mMovement,applyMove);
 		pt.setRate(speedRate);
-		//mMoves.play();
 		pt.play();
 	}
 	
 	public void play(){
-		//mMovement.play();
-		//applyMove.play();
 		if(pt!=null){
 			pt.play();
 		}
 	}
 
 	public void pause(){
-		//applyMove.pause();
-		//mMovement.pause();
-		if(pt!=null)
+		if(pt!=null){
 			pt.pause();
+		}
 	}
 	
 	public void stop(){
-		//applyMove.stop();
-		//mMovement.stop();
 		if(pt!= null){
 			pt.stop();
-			this.translateXProperty().removeListener(listener);
-			this.translateYProperty().removeListener(listener);
+			ft.stop();
 		}
 	}
 	
 	public void setRate(int rate){
-		//applyMove.setRate(rate);
-		//mMovement.setRate(rate);
 		speedRate = rate;
+		ft.setRate(rate);
+		explode.setRate(rate);
 		if(pt!= null){
 			pt.setRate(rate);
 		}
 	}
 	@Override
-	public DoubleProperty xPosProperty() {
-		// TODO Auto-generated method stub
+	public double xPosProperty() {
 		return currentX;
 	}
 
 	@Override
-	public DoubleProperty yPosProperty() {
-		// TODO Auto-generated method stub
+	public double yPosProperty() {
 		return currentY;
 	}
 
-	
+	class SpriteAnimation extends Transition {
+		private final ImageView imageView;
+	    private final int count;
+	    private final int columns;
+	    private final int offsetX;
+	    private final int offsetY;
+	    private final int width;
+	    private final int height;
+
+	    private int lastIndex;
+
+	    public SpriteAnimation(
+	            ImageView imageView, 
+	            Duration duration, 
+	            int count,   int columns,
+	            int offsetX, int offsetY,
+	            int width,   int height) {
+	        this.imageView = imageView;
+	        this.count     = count;
+	        this.columns   = columns;
+	        this.offsetX   = offsetX;
+	        this.offsetY   = offsetY;
+	        this.width     = width;
+	        this.height    = height;
+	        setCycleDuration(duration);
+	        setInterpolator(Interpolator.LINEAR);
+	    }
+
+	    protected void interpolate(double k) {
+	        final int index = Math.min((int) Math.floor(k * count), count - 1);
+	        if (index != lastIndex) {
+	            final int x = (index % columns) * width  + offsetX;
+	            final int y = (index / columns) * height + offsetY;
+	            imageView.setViewport(new Rectangle2D(x, y, width, height));
+	            lastIndex = index;
+	        }
+	    }
+	}
 	
 }

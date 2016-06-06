@@ -1,6 +1,5 @@
 package application;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 //import javafx.scene.layout.Background;
@@ -22,8 +21,8 @@ public class TourView extends StackPane implements OnTourShot{
 		mImage.setSmooth(true);
 		mImage.setCache(true);
 		
-		mImage.fitWidthProperty().bind(Main.TILE_SIZE_X.multiply(1));
-		mImage.fitHeightProperty().bind(Main.TILE_SIZE_Y.multiply(1));
+		mImage.fitWidthProperty().bind(ALauncher.getTileSizeX().multiply(1));
+		mImage.fitHeightProperty().bind(ALauncher.getTileSizeY().multiply(1));
 		
 		mTour.setOnTourShot(this);
 		//mTour.launch();
@@ -57,7 +56,7 @@ public class TourView extends StackPane implements OnTourShot{
 		mTour.damage();
 	}
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
+	public void whenShoting(double xValueTarget, double yValueTarget) {
 		
 	}
 	

@@ -1,7 +1,6 @@
 package modele;
 
 import application.OnSbireMoveAndDestroy;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import pathfinder.Path;
@@ -58,8 +57,9 @@ class Sbire implements TourTarget , SbireInterface{
 	
 	@Override
 	public synchronized boolean decrementPointDeVie(int pointVie) {
-		if(pointDeVie.get()==0)
+		if(this.pointDeVie.get()<=0){
 			return false;
+		}
 		int newValue = this.pointDeVie.get()- pointVie;
 		if(newValue>0){
 			this.pointDeVie.set(newValue);
@@ -81,7 +81,7 @@ class Sbire implements TourTarget , SbireInterface{
 	public synchronized void destroy(boolean isDead){
 		mPartie.remove(this, isDead);
 		if(sbireDestroy!=null){
-			sbireDestroy.onSbireDestroy();
+			sbireDestroy.onSbireDestroy(isDead);
 		}
 	}
 
@@ -176,12 +176,12 @@ class Sbire implements TourTarget , SbireInterface{
 	}
 
 	@Override
-	public DoubleProperty xProperty() {
+	public double xProperty() {
 		return sbireDestroy.xPosProperty();
 	}
 
 	@Override
-	public DoubleProperty yProperty() {
+	public double yProperty() {
 		return sbireDestroy.yPosProperty();
 	}
 }

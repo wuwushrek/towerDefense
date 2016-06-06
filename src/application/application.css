@@ -134,6 +134,9 @@
 #menuButton:pressed {
 	-fx-background-color:transparent;
 }
+#menuButton:disabled {
+	-fx-opacity:0.4;
+}
 
 #animRateView {
 	-fx-pref-height:60px;
@@ -204,4 +207,24 @@
 	-fx-fill:transparent;
 	-fx-stroke:gold;
 	-fx-stroke-width:15px;
+}
+#depart {
+	-fx-background-color :derive(black,40%);
+}
+#mainMenuImage {
+	-fx-background-color:transparent;
+	-fx-opacity:0.9;
+}
+#mainMenuImage:hover {
+	-fx-background-color:rgb(0,0,0,0.75);
+}
+#mainMenuBackground {
+	-fx-background-image:url("arrow_background.jpg");
+	-fx-background-size:cover ;
+}
+#portee_tour {
+	
+}
+#balle {
+	-fx-effect: dropshadow(gaussian,black,5, 0, -4, 0);
 }

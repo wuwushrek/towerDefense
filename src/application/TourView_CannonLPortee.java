@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -11,13 +10,14 @@ import modele.TourSideInterface;
 public class TourView_CannonLPortee extends TourView {
 	public TourView_CannonLPortee(int rowIndex , int columnIndex , TourSideInterface partie){
 		super (GameFactory.createTour(partie, rowIndex, columnIndex,
-				Main.infosTour.get("tour_canonportee")[0],
-				Main.infosTour.get("tour_canonportee")[1],
-				Main.infosTour.get("tour_canonportee")[2]),
-				Main.infosImage.get("tour_canonportee"));
+				ALauncher.infosTour.get("tour_canonportee")[0],
+				ALauncher.infosTour.get("tour_canonportee")[1],
+				ALauncher.infosTour.get("tour_canonportee")[2]),
+				ALauncher.infosImage.get("tour_canonportee"));
+		mTour.setIntervalCheck(ALauncher.infosTour.get("tour_canonportee")[3]);
 	}
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget , DoubleProperty yValueTarget){
+	public void whenShoting(double xValueTarget , double yValueTarget){
 		Bounds boundsInScene = localToScene(getBoundsInLocal());
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
         double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
@@ -35,9 +35,9 @@ public class TourView_CannonLPortee extends TourView {
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				Main.addNode(balls);
+				ALauncher.addNode(balls);
 			}
 		});
-		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,this);
+		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,TourView_CannonLPortee.this);
 	}
 }

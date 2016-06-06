@@ -3,7 +3,6 @@ package application;
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransition.OrientationType;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -19,16 +18,16 @@ import modele.TourSideInterface;
 public class TourView_Mortier extends TourView {
 	public TourView_Mortier(int rowIndex , int columnIndex , TourSideInterface partie){
 		super (GameFactory.createTour(partie, rowIndex, columnIndex,
-				Main.infosTour.get("mortier")[0],
-				Main.infosTour.get("mortier")[1],
-				Main.infosTour.get("mortier")[2]),
-				Main.infosImage.get("mortier"));
-		mTour.setIntervalCheck(Main.infosTour.get("mortier")[3]);
+				ALauncher.infosTour.get("mortier")[0],
+				ALauncher.infosTour.get("mortier")[1],
+				ALauncher.infosTour.get("mortier")[2]),
+				ALauncher.infosImage.get("mortier"));
+		mTour.setIntervalCheck(ALauncher.infosTour.get("mortier")[3]);
 	}
 	
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget){
-		ImageView balle = new ImageView(Main.infosImage.get("boule_bleu"));
+	public void whenShoting(double xValueTarget, double yValueTarget){
+		ImageView balle = new ImageView(ALauncher.infosImage.get("boule_bleu"));
 		balle.setRotate(90);
 		balle.setPreserveRatio(true);
 		balle.setSmooth(true);
@@ -36,6 +35,8 @@ public class TourView_Mortier extends TourView {
 		
 		balle.setFitWidth(30);
 		balle.setFitHeight(15);
+
+		balle.setId("balle");
 
 		Bounds boundsInScene = localToScene(getBoundsInLocal());
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
@@ -46,25 +47,27 @@ public class TourView_Mortier extends TourView {
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
-				Main.addNode(balle);
+				ALauncher.addNode(balle);
+				animate(xInScene , yInScene,xValueTarget , yValueTarget,100,balle,TourView_Mortier.this);
 			}
 		});
 		
-		animate(xInScene , yInScene,xValueTarget , yValueTarget,100,balle,this);
 	}
 	
-	public static void animate(double xFrom , double yFrom,DoubleProperty xTo, DoubleProperty yTo,
+	public static void animate(double xFrom , double yFrom,double xTo, double yTo,
 			double hauteur ,final Node node, TourView tour){
 		Path path = new Path();
 		path.getElements().add(new MoveTo(xFrom,yFrom));
 		QuadCurveTo quadCurve = new QuadCurveTo();
 		
-		quadCurve.setControlX((xFrom+xTo.get())/2);
-		quadCurve.setControlY(yFrom-hauteur);
-		quadCurve.xProperty().bind(xTo);
-		quadCurve.yProperty().bind(yTo);
+		quadCurve.setControlX((xFrom+xTo)/2);
+		quadCurve.setControlY(0);//Math.min(yFrom, yTo)+Math.abs((yFrom-yTo)/2));//Math.min(yFrom, yFrom)+Math.abs((yFrom-yTo)/2) yFrom);
+		//quadCurve.xProperty().bind(xTo);
+		//quadCurve.yProperty().bind(yTo);
+		quadCurve.setX(xTo);
+		quadCurve.setY(yTo);
 		path.getElements().add(quadCurve);
-		PathTransition pathTransition = new PathTransition(Duration.millis(300),path);
+		PathTransition pathTransition = new PathTransition(Duration.millis(400),path);
 		pathTransition.setRate(animRate);
 		pathTransition.setNode(node);
 		pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
@@ -73,7 +76,7 @@ public class TourView_Mortier extends TourView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				tour.onShotingEnd();
-				Main.removeNode(node);
+				ALauncher.removeNode(node);
 			}
 			
 		});

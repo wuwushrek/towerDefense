@@ -3,7 +3,6 @@ package application;
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransition.OrientationType;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -23,17 +22,15 @@ public class TourView_CanonSimple extends TourView {
 	Bloom bloom = new Bloom();
 	public TourView_CanonSimple(int rowIndex , int columnIndex, TourSideInterface partie){
 		super (GameFactory.createTour(partie, rowIndex, columnIndex,
-				Main.infosTour.get("canon_simple")[0],
-				Main.infosTour.get("canon_simple")[1],
-				Main.infosTour.get("canon_simple")[2]),
-				Main.infosImage.get("canon_simple"));
-		mTour.setIntervalCheck(Main.infosTour.get("canon_simple")[3]);
-		bloom.setThreshold(0.6);
-		//setRotate(90);
+				ALauncher.infosTour.get("canon_simple")[0],
+				ALauncher.infosTour.get("canon_simple")[1],
+				ALauncher.infosTour.get("canon_simple")[2]),
+				ALauncher.infosImage.get("canon_simple"));
+		mTour.setIntervalCheck(ALauncher.infosTour.get("canon_simple")[3]);
 	}
 	
 	@Override
-	public void whenShoting(DoubleProperty xValueTarget , DoubleProperty yValueTarget){
+	public void whenShoting(double xValueTarget , double yValueTarget){
 		Bounds boundsInScene = localToScene(getBoundsInLocal());
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
         double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
@@ -48,34 +45,31 @@ public class TourView_CanonSimple extends TourView {
 		
 		balls.setStroke(color.darker());
 		balls.setStrokeWidth(1);
+		balls.setId("balle");
 		
-		//balls.setEffect(bloom);
 		Point2D start = new Point2D(xInScene,yInScene);
-		Point2D end = new Point2D(xValueTarget.get(), yValueTarget.get());
+		Point2D end = new Point2D(xValueTarget, yValueTarget);
 		Point2D substract = end.subtract(start);
 		Point2D axeX = new Point2D(1,0);
 		double angleRotate = substract.getY()<0?-axeX.angle(substract):axeX.angle(substract);
-		System.out.println("Angle rotate en degree: "+angleRotate);
 		
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {
 				setRotate(angleRotate+90);
-				Main.addNode(balls);
+				ALauncher.addNode(balls);
+				animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,TourView_CanonSimple.this);
 			}
 		});
-		animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,this);
 	}
 	
-	public static void animate(double xFrom , double yFrom , DoubleProperty xTo , DoubleProperty yTo,
+	public static void animate(double xFrom , double yFrom , double xTo , double yTo,
 			final Node node, TourView tour){
 		Path path = new Path();
 		path.getElements().add(new MoveTo(xFrom,yFrom));
 		LineTo dest = new LineTo();
-		//dest.xProperty().bind(xTo);
-		//dest.yProperty().bind(yTo);
-		dest.setX(xTo.get());
-		dest.setY(yTo.get());
+		dest.setX(xTo);
+		dest.setY(yTo);
 		path.getElements().add(dest);
 		PathTransition translation = new PathTransition(Duration.millis(250),path);
 		translation.setRate(animRate);
@@ -85,9 +79,8 @@ public class TourView_CanonSimple extends TourView {
 		translation.setOnFinished(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println("BEFORE SHOUTING");
 				tour.onShotingEnd();
-				Main.removeNode(node);
+				ALauncher.removeNode(node);
 			}
 			
 		});

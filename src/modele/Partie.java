@@ -86,7 +86,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	
 	@Override
 	public int getNumberOfLevel(){
-		return sbireByLevel.length-1;
+		return sbireByLevel.length;
 	}
 	
 	@Override
@@ -353,7 +353,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		int minDistArrive = Integer.MAX_VALUE;
 		for(SbireInterface sbire: mSbires){
 			if((sbire.getRowIndex()==depart[0] && sbire.getColumnIndex()==depart[1])||
-					(sbire.getRowIndex()==arrivee[0]&& sbire.getColumnIndex()==arrivee[1]))
+					(sbire.getRowIndex()==arrivee[0] && sbire.getColumnIndex()==arrivee[1]))
 				continue;
 			int dist = (sbire.getRowIndex()-rowIndex)*(sbire.getRowIndex()-rowIndex)+
 					(sbire.getColumnIndex()-columnIndex)*(sbire.getColumnIndex()-columnIndex);
