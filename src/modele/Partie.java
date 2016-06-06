@@ -286,7 +286,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		}
 		if(walls !=null){
 			for(int i=0; i<walls.length;i++){
-				map[walls[i][0]][walls[i][0]]= WALL;
+				map[walls[i][0]][walls[i][1]]= WALL;
 			}
 		}
 	}

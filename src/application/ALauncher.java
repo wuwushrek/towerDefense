@@ -197,13 +197,17 @@ public class ALauncher extends Application {
 			int[] endCoord = {1,9};
 			int rowCount = 10;
 			int columnCount =10;
-			int[][] walls = new int[columnCount*2][2];
+			int[][] walls = new int[columnCount*2+2][2];
 			for(int i=0;i<columnCount; i++){
 				walls[i][0]=0;
 				walls[i][1]=i;
 				walls[i+columnCount][0]=rowCount-1;
 				walls[i+ columnCount][1]=i;
 			}
+			walls[2*columnCount][0]=1;
+			walls[2*columnCount][1]=8;
+			walls[2*columnCount+1][0]=2;
+			walls[2*columnCount+1][1]=8;
 			game = new CreateGame(id,walls,rowCount,columnCount,startCoord,endCoord,scene);
 		}else {
 			int[] startCoord = {4,0};

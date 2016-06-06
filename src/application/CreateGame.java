@@ -672,9 +672,9 @@ public class CreateGame extends Group {
 	/*
 	 * Attributs ou l'on s'occupe du chronometrage lors de la phase d'achat
 	 */
-	private final String selectionTime = "02:00";
+	private final String selectionTime = "01:30";
 	private final StringProperty time = new SimpleStringProperty(selectionTime);
-	private final int selectionTimeInt = 2 * 60;
+	private final int selectionTimeInt = 90;
 	private int compteur = selectionTimeInt;
 	private final Timeline chronometer = new Timeline(new KeyFrame(
 			Duration.millis(1000), new EventHandler<ActionEvent>() {
