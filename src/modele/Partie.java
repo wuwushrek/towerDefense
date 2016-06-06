@@ -15,8 +15,8 @@ import pathfinder.PathFinder;
 import pathfinder.TileBasedMap;
 
 class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, PartieInterface{
-	private final static int[] depart = new int[2];
-	private final static int[] arrivee = new int[2];
+	final static int[] depart = new int[2];
+	final static int[] arrivee = new int[2];
 
 	private final static int[] sbireByLevel = new int[]{25 , 35, 45 , 25 ,50};
 	private final static double[][] distribution = new double[][]{
@@ -352,7 +352,8 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		SbireInterface res=null;
 		int minDistArrive = Integer.MAX_VALUE;
 		for(SbireInterface sbire: mSbires){
-			if(sbire.getRowIndex()==depart[0] && sbire.getColumnIndex()==depart[1])
+			if((sbire.getRowIndex()==depart[0] && sbire.getColumnIndex()==depart[1])||
+					(sbire.getRowIndex()==arrivee[0]&& sbire.getColumnIndex()==arrivee[1]))
 				continue;
 			int dist = (sbire.getRowIndex()-rowIndex)*(sbire.getRowIndex()-rowIndex)+
 					(sbire.getColumnIndex()-columnIndex)*(sbire.getColumnIndex()-columnIndex);

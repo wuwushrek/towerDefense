@@ -156,6 +156,9 @@ class Tour implements TourInterface,Runnable {
 	}
 
 	private boolean inRange() {
+		if(target.getColumnIndex()==Partie.arrivee[1] && target.getRowIndex()== Partie.arrivee[0]){
+			return false;
+		}
 		int dist = (target.getRowIndex() - rowIndex) * (target.getRowIndex() - rowIndex)
 				+ (target.getColumnIndex() - columnIndex) * (target.getColumnIndex() - columnIndex);
 		return dist < porteeDist;
