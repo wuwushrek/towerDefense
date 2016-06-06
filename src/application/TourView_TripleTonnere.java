@@ -50,6 +50,7 @@ public class TourView_TripleTonnere extends TourView {
 						TourView_Tonnerre.withFade(group,Math.random() +0.2,TourView_TripleTonnere.this,false);
 					}
 				}
+				first=true;
 				for(Group group : jagged2){
 					if(first){
 						TourView_Tonnerre.withFade(group,Math.random() +0.2,TourView_TripleTonnere.this,true);
@@ -58,6 +59,7 @@ public class TourView_TripleTonnere extends TourView {
 						TourView_Tonnerre.withFade(group,Math.random() +0.2,TourView_TripleTonnere.this,false);
 					}
 				}
+				first=true;
 				for(Group group : jagged3){
 					if(first){
 						TourView_Tonnerre.withFade(group,Math.random() +0.2,TourView_TripleTonnere.this,true);

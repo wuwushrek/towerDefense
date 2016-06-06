@@ -31,7 +31,7 @@ public class ALauncher extends Application {
 	public static final Map<String,Image> infosImage = new HashMap<String,Image>();
 	
 	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 800;
+	private static final int HEIGHT = 700;
 	
 	Scene scene;
 	private Group mainPage = new Group();
@@ -55,21 +55,21 @@ public class ALauncher extends Application {
 		infosImage.put("canon_sup",new Image(getClass().getResource("canon_sup.png").toExternalForm()));
 		infosTour.put("canon_renforce", new Integer[]{9,55,1500,1300});
 		infosImage.put("canon_renforce",new Image(getClass().getResource("canon_renforce.png").toExternalForm()));
-		infosTour.put("flechette_mortier", new Integer[]{12,25,1300,1100});
+		infosTour.put("flechette_mortier", new Integer[]{13,30,1300,1100});
 		infosImage.put("flechette_mortier",new Image(getClass().getResource("flechette_mortier.png").toExternalForm()));
-		infosTour.put("laser", new Integer[]{12,25,1200,1000});
+		infosTour.put("laser", new Integer[]{13,25,1200,1000});
 		infosImage.put("laser",new Image(getClass().getResource("tourelle_laser.png").toExternalForm()));
-		infosTour.put("mortier", new Integer[]{16,55,1800,1500});
+		infosTour.put("mortier", new Integer[]{16,55,1800,1400});
 		infosImage.put("mortier",new Image(getClass().getResource("mortier_tower.png").toExternalForm()));
-		infosTour.put("mortier_gold", new Integer[]{16,50,2000,1200});
+		infosTour.put("mortier_gold", new Integer[]{16,60,2000,1200});
 		infosImage.put("mortier_gold",new Image(getClass().getResource("mortier_gold.png").toExternalForm()));
-		infosTour.put("tonnerre", new Integer[]{9,15,1000,900});
+		infosTour.put("tonnerre", new Integer[]{9,25,1000,900});
 		infosImage.put("tonnerre",new Image(getClass().getResource("tonnerre_tour.png").toExternalForm()));
-		infosTour.put("tonnerre_plus", new Integer[]{9,25,1500,900});
+		infosTour.put("tonnerre_plus", new Integer[]{9,35,1500,900});
 		infosImage.put("tonnerre_plus",new Image(getClass().getResource("tonnerre_tour2.png").toExternalForm()));
-		infosTour.put("tonnerre_plus_gold", new Integer[]{12,25,2000,900});
+		infosTour.put("tonnerre_plus_gold", new Integer[]{13,45,2000,900});
 		infosImage.put("tonnerre_plus_gold",new Image(getClass().getResource("portee_powerful_tonnerre.png").toExternalForm()));
-		infosTour.put("triple_tonnerre", new Integer[]{12,15,3000,900});//15 par foudre
+		infosTour.put("triple_tonnerre", new Integer[]{13,25,3000,900});//15 par foudre
 		infosImage.put("triple_tonnerre",new Image(getClass().getResource("powerful_tonnerre.png").toExternalForm()));
 		
 		/*IMportation des Images concernant l'environnement et les menus*/

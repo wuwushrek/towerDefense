@@ -2,6 +2,7 @@ package modele;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.beans.property.BooleanProperty;
@@ -20,13 +21,15 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 
 	private final static int[] sbireByLevel = new int[]{25 , 35, 45 , 25 ,50};
 	private final static double[][] distribution = new double[][]{
-		{0.75,0.95},{0.65,0.90},{0.6,0.85},{0.4,0.75},{0.3,0.6}};
+		{0.75,0.95},{0.6,0.90},{0.5,0.85},{0.4,0.75},{0.3,0.6}};
 	private static final int MAX_VIE = 250;
 	private static final int MAX_ARGENT =3000;
 	
 	private final static int WALL = -1;
 	private final static int VIDE = -2;
 	private final static int TOUR = -3;
+	
+	private final Random rand = new Random();
 	
 	PathFinder pathFinder;
 	int[][] map;
@@ -314,7 +317,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		//mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		for(int i = 0 ; i<sbireByLevel[level.get()]; i++){
 			Sbire sbire;
-			double rand = Math.random();
+			double rand=this.rand.nextDouble();
 			if(rand<distribution[level.get()][0]){
 				sbire = new SbireMinion(this,depart[0],depart[1]);
 				sbire.setNom("minionSbire");
