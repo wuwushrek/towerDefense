@@ -56,18 +56,20 @@ public class TourView_Tonnerre extends TourView {
 		return ret;
 	}
 	
-	public static void withFade(Group group ,double brightness){
-		FadeTransition ft =new FadeTransition(Duration.millis(animDuration),group);
+	public static void withFade(Group group ,double brightness,TourView tour){
+		FadeTransition ft =new FadeTransition(Duration.millis(200),group);
 		ft.setFromValue(brightness/8);
 		ft.setToValue(brightness);
 		ft.setCycleCount(4);
 		ft.setAutoReverse(true);
+		ft.setRate(animRate);
 		ft.setOnFinished(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {
 				Platform.runLater(new Runnable(){
 					@Override
 					public void run() {
+						tour.onShotingEnd();
 						Main.removeNode(group);
 					}
 				});
@@ -110,7 +112,7 @@ public class TourView_Tonnerre extends TourView {
 			}
 		});
 		for(Group group : jagged){
-			withFade(group ,Math.random() +0.2);
+			withFade(group ,Math.random() +0.2,this);
 		}
 		
 	}

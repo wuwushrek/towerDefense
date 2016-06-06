@@ -39,6 +39,6 @@ public class TourView_CanonLPorteePuiss extends TourView {
 				Main.addNode(balls);
 			}
 		});
-		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls);
+		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,this);
 	}
 }

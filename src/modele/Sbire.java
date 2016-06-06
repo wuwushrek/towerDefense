@@ -22,6 +22,7 @@ class Sbire implements TourTarget , SbireInterface{
 	private int argentRapporte;
 	private int scoreRapporte;
 	private double vitesse;//between 0 and 1
+	private String nom = "";
 	
 	private OnSbireMoveAndDestroy sbireDestroy;
 	
@@ -40,20 +41,27 @@ class Sbire implements TourTarget , SbireInterface{
 		initialPointDeVie=pointVie;
 		this.vitesse=vitesse;
 		compteurId++;
-		System.out.println(toString());
 	}
 	
 	public IntegerProperty pointDeVieProperty() {
 		return pointDeVie;
 	}
 
+	public void setNom(String nom){
+		this.nom=nom;
+	}
+	
+	@Override
+	public String getNom(){
+		return nom;
+	}
+	
 	@Override
 	public synchronized boolean decrementPointDeVie(int pointVie) {
 		if(pointDeVie.get()==0)
 			return false;
 		int newValue = this.pointDeVie.get()- pointVie;
 		if(newValue>0){
-			System.out.println(this.toString());
 			this.pointDeVie.set(newValue);
 			if(sbireDestroy != null)
 			{
@@ -83,7 +91,6 @@ class Sbire implements TourTarget , SbireInterface{
 	}
 	
 	public boolean moveTo(int destRowIndex , int destColumnIndex){
-		//System.out.println("SBIRE : FROM "+rowIndex + ", "+columnIndex+ "  TO: "+destRowIndex +" ,"+destColumnIndex);
 		int lastRowIndex = rowIndex.get();
 		int lastColumnIndex = columnIndex.get();
 		this.rowIndex.set(destRowIndex);

@@ -39,6 +39,6 @@ public class TourView_MortierGold extends TourView{
 				Main.addNode(balle);
 			}
 		});
-		TourView_Mortier.animate(xInScene , yInScene,xValueTarget , yValueTarget,150,balle);
+		TourView_Mortier.animate(xInScene , yInScene,xValueTarget , yValueTarget,150,balle,this);
 	}
 }

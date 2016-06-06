@@ -1,9 +1,9 @@
 package application;
 
-import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
+import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -32,6 +32,7 @@ import pathfinder.Path.Step;
 public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
 	private final static long BASIC_STEP_TIME = 2000;
+	private int speedRate =1;
 	
 	private SbireInterface mSbire;
 	private ProgressBar mProgress;
@@ -39,6 +40,7 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	
 	private PathTransition mMovement;
 	private Timeline applyMove = new Timeline();
+	private ParallelTransition pt;
 
 	private DoubleProperty currentX = new SimpleDoubleProperty();
 	private DoubleProperty currentY = new SimpleDoubleProperty();
@@ -88,19 +90,17 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		
 		mMovement = new PathTransition();
 		mMovement.setDuration(Duration.millis((long) (BASIC_STEP_TIME*mSbire.getPath().getLength()*mSbire.getVitesse())));
-		mMovement.setNode(this);
+		//mMovement.setNode(this);
 		mMovement.setAutoReverse(false);
 		mMovement.setInterpolator(Interpolator.LINEAR);
 		
-		applyMove.setCycleCount(Animation.INDEFINITE);
+		applyMove.setCycleCount(mSbire.getPath().getLength());
 		applyMove.setDelay(new Duration(BASIC_STEP_TIME*mSbire.getVitesse()/2.0));
 		applyMove.getKeyFrames().addAll(
-				new KeyFrame(new Duration(BASIC_STEP_TIME*mSbire.getVitesse()), new EventHandler<ActionEvent>(){
+				new KeyFrame(Duration.millis(BASIC_STEP_TIME*mSbire.getVitesse()), new EventHandler<ActionEvent>(){
 					@Override
 					public void handle(ActionEvent arg0) {
-						if(!mSbire.moveNext()){
-							applyMove.stop();
-						};
+						mSbire.moveNext();
 					}	
 		}));
 	}
@@ -108,8 +108,9 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	@Override
 	public void onSbireDestroy() {
 		// TODO Auto-generated method stub
-		mMovement.stop();
-		applyMove.stop();
+		//mMovement.stop();
+		//applyMove.stop();
+		pt.stop();
 		this.translateXProperty().removeListener(listener);
 		this.translateYProperty().removeListener(listener);
 		Platform.runLater(new Runnable(){
@@ -117,7 +118,9 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 			public void run() {
 				// TODO Auto-generated method stub
 				Group parent =(Group) getParent();
-				parent.getChildren().remove(SbireView.this);
+				if(parent!= null && SbireView.this != null){
+					parent.getChildren().remove(SbireView.this);
+				}
 			}
 		});
 	}
@@ -131,7 +134,6 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 		ft.setCycleCount(4);
 		ft.setAutoReverse(true);
 		mProgress.setEffect(new ColorAdjust(255,0,0,1));
-		
 		ft.play();
 		
 	}
@@ -140,11 +142,13 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	private void initPathAnimation(Path mPath){
 		javafx.scene.shape.Path path = new javafx.scene.shape.Path();
 		MoveTo mvo = new MoveTo(this.getLayoutX(),this.getLayoutY());
-		System.out.print(mvo);
 		path.getElements().add(mvo);
 		for(int i=1;i< mPath.getLength();i++){
 			Step current = mPath.getStep(i);
-			path.getElements().add(new LineTo(current.getY()*Main.TILE_SIZE_X.get(),current.getX()*Main.TILE_SIZE_Y.get()));
+			LineTo dest = new LineTo();
+			dest.xProperty().bind(Main.TILE_SIZE_X.multiply(current.getY()));
+			dest.yProperty().bind(Main.TILE_SIZE_Y.multiply(current.getX()));
+			path.getElements().add(dest);
 		}
 		javafx.scene.shape.Path pathLocal = new javafx.scene.shape.Path();
 	    path.getElements().forEach(elem->{
@@ -164,13 +168,47 @@ public class SbireView extends VBox implements OnSbireMoveAndDestroy{
 	/*public void initPathAnimation(){
 		initPathAnimation(mSbire.getPath());
 	}*/
-	public void play(){
-		//mMoves.play();
+	public void firstPlay(){
 		initPathAnimation(mSbire.getPath());
-		mMovement.play();
-		applyMove.play();
+		pt= new ParallelTransition(this,mMovement,applyMove);
+		pt.setRate(speedRate);
+		//mMoves.play();
+		pt.play();
+	}
+	
+	public void play(){
+		//mMovement.play();
+		//applyMove.play();
+		if(pt!=null){
+			pt.play();
+		}
 	}
 
+	public void pause(){
+		//applyMove.pause();
+		//mMovement.pause();
+		if(pt!=null)
+			pt.pause();
+	}
+	
+	public void stop(){
+		//applyMove.stop();
+		//mMovement.stop();
+		if(pt!= null){
+			pt.stop();
+			this.translateXProperty().removeListener(listener);
+			this.translateYProperty().removeListener(listener);
+		}
+	}
+	
+	public void setRate(int rate){
+		//applyMove.setRate(rate);
+		//mMovement.setRate(rate);
+		speedRate = rate;
+		if(pt!= null){
+			pt.setRate(rate);
+		}
+	}
 	@Override
 	public DoubleProperty xPosProperty() {
 		// TODO Auto-generated method stub

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import pathfinder.AStarPathFinder;
 import pathfinder.Mover;
@@ -16,16 +18,15 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	private final static int[] depart = new int[2];
 	private final static int[] arrivee = new int[2];
 
-	//private static final int MAX_LEVEL = 3;
-	private final static int[] sbireByLevel = new int[]{25 , 25, 35};
-	private static final int MAX_VIE = 100;
+	private final static int[] sbireByLevel = new int[]{25 , 35, 45 , 25 ,50};
+	private final static double[][] distribution = new double[][]{
+		{0.75,0.95},{0.65,0.90},{0.6,0.85},{0.4,0.75},{0.3,0.6}};
+	private static final int MAX_VIE = 250;
 	private static final int MAX_ARGENT =3000;
 	
 	private final static int WALL = -1;
 	private final static int VIDE = -2;
 	private final static int TOUR = -3;
-	//private final static int MULTIPLE_SBIRE=-4;
-	//private final static int SBIRE = -5;
 	
 	PathFinder pathFinder;
 	int[][] map;
@@ -40,6 +41,8 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	private IntegerProperty argent;
 	private IntegerProperty score;
 	private IntegerProperty level;
+	private BooleanProperty alive;
+	private BooleanProperty levelDone;
 	
 	List<Tour> mTours;
 	List<SbireInterface> mSbires;
@@ -62,6 +65,8 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		argent = new SimpleIntegerProperty(MAX_ARGENT);
 		pointVie = new SimpleIntegerProperty(MAX_VIE);
 		score = new SimpleIntegerProperty(0);
+		alive = new SimpleBooleanProperty(isAlive);
+		levelDone = new SimpleBooleanProperty(LEVEL_DONE);
 		
 		mTours = new ArrayList<Tour>();
 		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
@@ -69,10 +74,22 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		pathFinder = new AStarPathFinder(this,500,false);
 	}
 	
+	@Override
+	public BooleanProperty aliveProperty() {
+		return alive;
+	}
+	
+	@Override
+	public BooleanProperty levelDoneProperty(){
+		return levelDone;
+	}
+	
+	@Override
 	public int getNumberOfLevel(){
 		return sbireByLevel.length-1;
 	}
 	
+	@Override
 	public int getCurrentSbireNumber(){
 		return sbireByLevel[level.get()];
 	}
@@ -130,6 +147,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 			for(Tour tour: mTours){
 				tour.stopTour();
 			}
+			alive.set(isAlive);
 			return;
 		}
 		pointVie.set(newValue);
@@ -162,14 +180,10 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	@Override
 	public boolean add(Tour tour) {
 		if(!decrementArgent(tour.getCost())){
-			System.out.println("NOT ENOUGHT MONEY: "+tour.toString());
 			return false;
 		}
 		mTours.add(tour);
 		map[tour.getRowIndex()][tour.getColumnIndex()]= TOUR;
-		System.out.println("ADDED: "+tour.toString());
-		System.out.println("POINT VIE: "+pointVie.get()+", ARGENT: "+ argent.get()+ ", SBIRE TUEES: "+
-				sbireTuee.get()+", SCORE: "+score.get());
 		return true;
 	}
 
@@ -179,7 +193,7 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		map[tour.getRowIndex()][tour.getColumnIndex()]= VIDE;
 		tour.stopTour();
 		mTours.remove(tour);
-		System.out.println("DESTROY: "+tour.toString());
+		incrementArgent(tour.getCost());
 		return true;
 	}
 
@@ -195,7 +209,6 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 				return false;
 		getAndApplyMoveForSbire(sbire.getRowIndex(),sbire.getColumnIndex(),0,0,false);
 		if(!isDead){
-			decrementArgent(sbire.getArgentRapporte());//a modifier
 			decrementPointVie(sbire.getDamages());
 		}else{
 			incrementArgent(sbire.getArgentRapporte());
@@ -203,10 +216,15 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 			incrementScore(sbire.getScoreRapporte());
 		}
 		nbOfSbireGone++;
+		if(!isAlive)
+			return true;
 		LEVEL_DONE = nbOfSbireGone == sbireByLevel[level.get()];
-		System.out.println("DESTROY: "+ sbire.toString());
-		System.out.println("POINT VIE: "+pointVie.get()+", ARGENT: "+ argent.get()+ ", SBIRE TUEES: "+
-		sbireTuee.get()+", SCORE: "+score.get());
+		if(LEVEL_DONE){
+			for(Tour tour: mTours){
+				tour.stopTour();
+			}
+			levelDone.set(LEVEL_DONE);
+		}
 		return true;
 	}
 
@@ -239,6 +257,11 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 		return 1;
 	}
 	
+	@Override
+	public void setRateFactor(int rate){
+		Tour.setRate(rate);
+	}
+	
 	public static void setDepart(int x , int y){
 		depart[0]=x;
 		depart[1]=y;
@@ -268,19 +291,48 @@ class Partie implements TileBasedMap , TourSideInterface, SbireSideInterface, Pa
 	public void setWalls(int[][] walls){
 		this.walls=walls;
 		for(int i=0; i<walls.length;i++){
-			map[walls[i][0]][walls[i][0]]= WALL;
+			map[walls[i][0]][walls[i][1]]= WALL;
+		}
+	}
+	
+	@Override
+	public void nextLevelInitialisation(){
+		if(LEVEL_DONE){
+			incrementLevel();
+			nbOfSbireGone=0;
+			sbireTuee.set(0);
+			levelDone.set(false);
+			LEVEL_DONE=false;
 		}
 	}
 	
 	@Override
 	public void initSbiresOnLevel(){
-		//resetMap();
-		mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
+		resetMap();
+		mSbires.clear();
+		
+		//mSbires = new CopyOnWriteArrayList<SbireInterface>();//new ArrayList<Sbire>();
 		for(int i = 0 ; i<sbireByLevel[level.get()]; i++){
-			Sbire sbire = new Sbire(this,100,depart[0],depart[1],25,100, 5 ,1.0);
+			Sbire sbire;
+			double rand = Math.random();
+			if(rand<distribution[level.get()][0]){
+				sbire = new SbireMinion(this,depart[0],depart[1]);
+				sbire.setNom("minionSbire");
+			}else if(rand<distribution[level.get()][1]){
+				sbire = new SbireTroll(this,depart[0],depart[1]);
+				sbire.setNom("troll");
+			}else{
+				sbire = new SbireBoss(this,depart[0],depart[1]);
+				sbire.setNom("boss");
+			}
 			mSbires.add(sbire);
 		}
+		for(Tour tour : mTours){
+			tour.reset();
+			tour.launch();
+		}
 		map[depart[0]][depart[1]] = sbireByLevel[level.get()];
+		timeToSetSbirePath();
 	}
 
 	@Override

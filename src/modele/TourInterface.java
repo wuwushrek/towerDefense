@@ -11,4 +11,7 @@ public interface TourInterface {
 	long getIntervalCheck();
 	void setIntervalCheck(long pause);
 	int getPorteeDist();
+	int getCost();
+	void stopTour();
+	boolean damage();
 }

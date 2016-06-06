@@ -34,7 +34,7 @@ public class TourView_Laser extends TourView {
         double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
         double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
 		Group laserW = laser(xInScene , yInScene ,xValueTarget,yValueTarget,Color.DARKBLUE);
-		TourView_Tonnerre.withFade(laserW,Math.random() +0.2);
+		TourView_Tonnerre.withFade(laserW,Math.random() +0.2,this);
 		Platform.runLater(new Runnable(){
 			@Override
 			public void run() {

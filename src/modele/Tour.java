@@ -2,8 +2,9 @@ package modele;
 
 import application.OnTourShot;
 
-class Tour extends Thread implements TourInterface {
+class Tour implements TourInterface,Runnable {
 	private static final long INTERVAL_CHECK = 500;
+	private static int accelerateFactor =1;
 	private TourSideInterface mPartie;
 	private int rowIndex;
 	private int columnIndex;
@@ -25,7 +26,6 @@ class Tour extends Thread implements TourInterface {
 		this.damages = damages;
 		this.cost = cost;
 		interval_check = INTERVAL_CHECK;
-		System.out.println(toString());
 		mPartie.add(this);
 	}
 
@@ -71,6 +71,10 @@ class Tour extends Thread implements TourInterface {
 		this.cost = cost;
 	}
 
+	public void reset(){
+		target= null;
+	}
+	
 	@Override
 	public long getIntervalCheck() {
 		return interval_check;
@@ -85,13 +89,10 @@ class Tour extends Thread implements TourInterface {
 		target = mPartie.lookAndKill(rowIndex, columnIndex, porteeDist);
 		if (target == null)
 			return;
-		if (!target.decrementPointDeVie(damages)) {
-			target = null;
-			if (whenShoting != null)
-				whenShoting.whenTargetDie();
-		} else {
-			if (whenShoting != null)
-				whenShoting.whenShoting(target.xProperty(), target.yProperty());
+		if(whenShoting != null){
+			whenShoting.whenShoting(target.xProperty(), target.yProperty());
+		}else{
+			target.decrementPointDeVie(damages);
 		}
 	}
 
@@ -104,7 +105,7 @@ class Tour extends Thread implements TourInterface {
 	@Override
 	public void launch() {
 		isLooking = true;
-		this.start();
+		new Thread(this).start();
 	}
 
 	public void stopTour() {
@@ -114,6 +115,20 @@ class Tour extends Thread implements TourInterface {
 	public void setOnTourShot(OnTourShot tourShot) {
 		whenShoting = tourShot;
 	}
+	
+	public static void setRate(int rate){
+		accelerateFactor=rate;
+	}
+	
+	@Override
+	public boolean damage(){
+		if(target!= null && !target.decrementPointDeVie(damages)){
+			target= null;
+			return false;
+		}else{
+			return true;
+		}
+	}
 
 	@Override
 	public void run() {
@@ -122,25 +137,22 @@ class Tour extends Thread implements TourInterface {
 				lookForEnnemyAndKill();
 			} else {
 				if (inRange()) {
-					if (!target.decrementPointDeVie(damages)) {
-						target = null;
-						if (whenShoting != null)
-							whenShoting.whenTargetDie();
-					} else {
-						if (whenShoting != null)
-							whenShoting.whenShoting(target.xProperty(), target.yProperty());
+					if(whenShoting!= null){
+						whenShoting.whenShoting(target.xProperty(), target.yProperty());
+					}else{
+						target.decrementPointDeVie(damages);
 					}
 				}else{
 					target=null;
 				}
 			}
 			try {
-				Thread.sleep(interval_check);
+				Thread.sleep(interval_check/accelerateFactor);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("TOUR STOPPEE");
+		System.out.println("TOUR STOPPEE: "+ Thread.currentThread().getName());
 	}
 
 	private boolean inRange() {

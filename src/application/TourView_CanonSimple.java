@@ -64,23 +64,29 @@ public class TourView_CanonSimple extends TourView {
 				Main.addNode(balls);
 			}
 		});
-		animate(xInScene,yInScene,xValueTarget , yValueTarget,balls);
+		animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,this);
 	}
 	
-	public static void animate(double xFrom , double yFrom , DoubleProperty xTo , DoubleProperty yTo,final Node node){
+	public static void animate(double xFrom , double yFrom , DoubleProperty xTo , DoubleProperty yTo,
+			final Node node, TourView tour){
 		Path path = new Path();
 		path.getElements().add(new MoveTo(xFrom,yFrom));
 		LineTo dest = new LineTo();
-		dest.xProperty().bind(xTo);
-		dest.yProperty().bind(yTo);
+		//dest.xProperty().bind(xTo);
+		//dest.yProperty().bind(yTo);
+		dest.setX(xTo.get());
+		dest.setY(yTo.get());
 		path.getElements().add(dest);
-		PathTransition translation = new PathTransition(Duration.millis(animDuration),path);
+		PathTransition translation = new PathTransition(Duration.millis(250),path);
+		translation.setRate(animRate);
 		translation.setNode(node);
 		translation.setAutoReverse(true);
 		translation.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
 		translation.setOnFinished(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent arg0) {
+				System.out.println("BEFORE SHOUTING");
+				tour.onShotingEnd();
 				Main.removeNode(node);
 			}
 			

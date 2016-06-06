@@ -2,6 +2,7 @@ package modele;
 
 import java.util.List;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 
 public interface PartieInterface {
@@ -18,4 +19,9 @@ public interface PartieInterface {
 	void initSbiresOnLevel();
 	List<SbireInterface> getSbireList();
 	boolean isPathPossible(int rowIndex , int columnIndex);
+	BooleanProperty levelDoneProperty();
+	BooleanProperty aliveProperty();
+	void setRateFactor(int rate);
+	void nextLevelInitialisation();
+	void setWalls(int[][] walls);
 }

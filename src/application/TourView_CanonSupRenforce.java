@@ -51,6 +51,6 @@ public class TourView_CanonSupRenforce extends TourView {
 				Main.addNode(balls);
 			}
 		});
-		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls);
+		TourView_CanonSimple.animate(xInScene,yInScene,xValueTarget , yValueTarget,balls,this);
 	}
 }

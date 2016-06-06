@@ -47,6 +47,6 @@ public class TourView_Acher extends TourView {
 				Main.addNode(balle);
 			}
 		});
-		TourView_CanonSimple.animate(xInScene , yInScene,xValueTarget , yValueTarget,balle);
+		TourView_CanonSimple.animate(xInScene , yInScene,xValueTarget , yValueTarget,balle,this);
 	}
 }

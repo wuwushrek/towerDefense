@@ -19,5 +19,7 @@ public interface SbireInterface {
 
 	double getVitesse();
 
-	boolean moveNext();;
+	boolean moveNext();
+
+	String getNom();;
 }

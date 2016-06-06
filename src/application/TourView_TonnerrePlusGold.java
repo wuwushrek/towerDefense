@@ -38,7 +38,7 @@ public class TourView_TonnerrePlusGold extends TourView {
 			}
 		});
 		for(Group group : jagged){
-			TourView_Tonnerre.withFade(group,Math.random() +0.2);
+			TourView_Tonnerre.withFade(group,Math.random() +0.2,this);
 		}
 		
 	}

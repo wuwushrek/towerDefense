@@ -11,7 +11,8 @@ import modele.TourInterface;
 public class TourView extends StackPane implements OnTourShot{
 	protected TourInterface mTour;
 	private ImageView mImage;
-	protected static final long animDuration = 250;
+	protected static final long animDuration = 150;
+	protected static int animRate =1;
 	
 	public TourView(TourInterface tour, Image tourIm){
 		super();
@@ -25,8 +26,15 @@ public class TourView extends StackPane implements OnTourShot{
 		mImage.fitHeightProperty().bind(Main.TILE_SIZE_Y.multiply(1));
 		
 		mTour.setOnTourShot(this);
-		mTour.launch();
+		//mTour.launch();
 		getChildren().addAll(mImage);
+	}
+	
+	public void pause(){
+		mTour.stopTour();
+	}
+	public void play(){
+		mTour.launch();
 	}
 	
 	public int getRow(){
@@ -37,29 +45,19 @@ public class TourView extends StackPane implements OnTourShot{
 		return mTour.getColumnIndex();
 	}
 	
-	public double getPortee(){
-		return Math.sqrt(mTour.getPorteeDist());
+	public TourInterface getTour(){
+		return mTour;
 	}
 	
+	public static void setRate(int rate){
+		animRate = rate;
+	}
+	
+	public void onShotingEnd(){
+		mTour.damage();
+	}
 	@Override
 	public void whenShoting(DoubleProperty xValueTarget, DoubleProperty yValueTarget) {
-		//Point2D pt = localToScene(this.getLayoutX(),this.getLayoutY());
-		/*Bounds boundsInScene = localToScene(getBoundsInLocal());
-        double xInScene = boundsInScene.getMinX()+boundsInScene.getWidth()/2;
-        double yInScene = boundsInScene.getMinY()+boundsInScene.getHeight()/2;
-		Vec startVec = new Vec(xInScene,yInScene);
-		Vec destVec = new Vec(xValueTarget.get(),yValueTarget.get());
-		//System.out.println("ORIGINAL: "+pt.getX()+", "+pt.getY());
-		List<Group> jagged = jaggedLines(startVec,destVec,Color.WHITESMOKE);
-		Platform.runLater(new Runnable(){
-			@Override
-			public void run() {
-				Main.addAll(jagged);
-			}
-		});
-		for(Group group : jagged){
-			withFade(group ,150,Math.random() +0.2);
-		}*/
 		
 	}
 	
